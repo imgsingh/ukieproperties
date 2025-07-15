@@ -1,0 +1,33 @@
+/* styles/Home.module.css */
+
+.container {
+    padding: 20px;
+}
+
+.title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.propertyList {
+    list-style: none;
+    padding: 0;
+}
+
+.propertyItem {
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.propertyItem a {
+    display: block;
+    color: #333;
+}
+
+.propertyItem a:hover {
+    background-color: #f1f1f1;
+}
