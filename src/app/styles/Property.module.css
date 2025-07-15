@@ -1,0 +1,13 @@
+/* styles/Property.module.css */
+
+.container {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+p {
+    margin: 10px 0;
+}

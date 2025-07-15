@@ -1,0 +1,38 @@
+{
+  "name": "ukieproperties",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/icons-material": "^6.4.6",
+    "@mui/material": "^6.1.9",
+    "@mui/system": "^6.4.6",
+    "leaflet": "^1.9.4",
+    "leaflet-draw": "^1.0.4",
+    "lucide-react": "^0.516.0",
+    "mapbox-gl": "^3.9.4",
+    "next": "15.0.3",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1",
+    "react-leaflet": "^5.0.0-rc.2",
+    "react-map-gl": "^7.1.9",
+    "toastr": "^2.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

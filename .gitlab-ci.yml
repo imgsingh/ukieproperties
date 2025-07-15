@@ -1,0 +1,24 @@
+pages:
+  image: node:24-alpine
+  stage: deploy
+  script:
+    - npm install --force
+    - npm run build
+    - ls -la  # Debug: see what was created
+    - mkdir -p public
+    - |
+      if [ -d "out" ]; then
+        cp -r out/* public/
+      elif [ -d ".next" ]; then
+        echo "Using .next folder - static export not configured"
+        cp -r .next/static public/
+        # Copy any other necessary files from .next
+      else
+        echo "No build output found"
+        exit 1
+      fi
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
