@@ -1,54 +1,186 @@
+"use client"
+import { useState } from "react";
 import Link from "next/link";
-import styles from "../styles/Navbar.module.css"; // We'll add custom CSS for styling
+import styles from "../styles/Navbar.module.css";
 import image from '../assets/images/house-icon.png'
+import {
+    Drawer,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Button
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Box } from "@mui/system";
+import { SearchIcon } from "lucide-react";
 
 export default function Navbar() {
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const toggleDrawer = (open) => () => {
+        setIsDrawerOpen(open);
+    };
+
+    // Navigation items for reusability
+    const navItems = [
+        { href: "/", label: "Home" },
+        { href: "/about", label: "About Us" }
+    ];
+
+    const searchItems = [
+        { href: "/map-search", label: "Map Search" },
+        { href: "/list-search", label: "List Search" },
+        { href: "/advance-search", label: "Advanced Search" }
+    ];
+
     return (
         <nav className={styles.navbar}>
             <div className={styles.container}>
-                <Link href="/" className={styles.logo} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <svg
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="40" height="40"
-                        viewBox="0 0 200 300"
-                    >
-                        <path d="M100,0 C155,0 200,45 200,100 C200,190 100,300 100,300 C100,300 0,190 0,100 C0,45 45,0 100,0 Z" fill="#00963f" />
-                        <polygon points="50,120 150,120 150,200 50,200" fill="white" />
-                        <polygon points="40,120 100,50 160,120" fill="white" />
-                        <rect x="70" y="150" width="20" height="20" fill="#00963f" />
-                        <rect x="110" y="150" width="20" height="50" fill="#00963f" />
-                    </svg>
-                    <span>UKIE Properties</span>
+                {/* Logo Section */}
+                <Link href="/" className={styles.logoLink}>
+                    <div className={styles.horizontallogo}>
+                        <div className={styles.logoicon}>
+                            {/* Uncomment and style these as needed */}
+                            {/* <div className={styles.flaguk}></div>
+                            <div className={styles.flagireland}></div>
+                            <div className={styles.houseicon}></div> */}
+                        </div>
+                        <div className={styles.logotext}>
+                            <h1 className={styles.companyname}>
+                                <span className={styles.ukpart}>UK</span>
+                                <span className={styles.irelandpart}>Ireland</span> Properties
+                            </h1>
+                            <p className={styles.tagline}>Your Bridge to Property Success</p>
+                        </div>
+                    </div>
                 </Link>
 
-                <ul className={styles.navList}>
-                    <li className={styles.navItem}>
-                        <Link href="/" className={styles.navLink}>
-                            Home
-                        </Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/about" className={styles.navLink}>
-                            About Us
-                        </Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/map-search" className={styles.navLink}>
-                            Map Search
-                        </Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/list-search" className={styles.navLink}>
-                            List Search
-                        </Link>
-                    </li>
-                    <li className={styles.navItem}>
-                        <Link href="/advance-search" className={styles.navLink}>
-                            Advance Search
-                        </Link>
-                    </li>
-                </ul>
+                {/* Desktop Navigation */}
+                <Box
+                    sx={{
+                        display: { xs: "none", sm: "flex" },
+                        alignItems: "center",
+                        gap: 2
+                    }}
+                >
+                    <ul className={styles.navList}>
+                        {navItems.map((item) => (
+                            <li key={item.href} className={styles.navItem}>
+                                <Link href={item.href} className={styles.navLink}>
+                                    {item.label}
+                                </Link>
+                            </li>
+                        ))}
+
+                        <li className={styles.navItem}>
+                            {/* Search Dropdown */}
+                            <Button
+                                color="inherit"
+                                onClick={handleMenuOpen}
+                                endIcon={<ExpandMoreIcon />}
+                                sx={{
+                                    color: "white",
+                                    textTransform: "none",
+                                    fontSize: "inherit",
+                                    fontWeight: "inherit",
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                                    }
+                                }}
+                            >
+                                Search Properties
+                            </Button>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={handleMenuClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'search-button',
+                                }}
+                            >
+                                {searchItems.map((item) => (
+                                    <MenuItem
+                                        key={item.href}
+                                        onClick={handleMenuClose}
+                                        component="a"
+                                        href={item.href}
+                                    >
+                                        {item.label}
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        </li>
+                    </ul>
+                </Box>
+
+                {/* Mobile Hamburger Menu */}
+                <IconButton
+                    edge="end"
+                    color="inherit"
+                    aria-label="open navigation menu"
+                    onClick={toggleDrawer(true)}
+                    sx={{
+                        display: { xs: "block", sm: "none" },
+                        color: "white",
+                        ml: "auto"
+                    }}
+                >
+                    <MenuIcon />
+                </IconButton>
+
+                {/* Mobile Drawer */}
+                <Drawer
+                    anchor="left"
+                    open={isDrawerOpen}
+                    onClose={toggleDrawer(false)}
+                    PaperProps={{
+                        sx: {
+                            width: 250,
+                            bgcolor: 'background.paper'
+                        }
+                    }}
+                >
+                    <Box sx={{ pt: 2 }}>
+                        <List>
+                            {navItems.map((item) => (
+                                <ListItem
+                                    key={item.href}
+                                    button
+                                    component="a"
+                                    href={item.href}
+                                    onClick={toggleDrawer(false)}
+                                >
+                                    <ListItemText primary={item.label} />
+                                </ListItem>
+                            ))}
+
+                            {searchItems.map((item) => (
+                                <ListItem
+                                    key={item.href}
+                                    button
+                                    component="a"
+                                    href={item.href}
+                                    onClick={toggleDrawer(false)}
+                                >
+                                    <ListItemText primary={item.label} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </Drawer>
             </div>
         </nav>
     );

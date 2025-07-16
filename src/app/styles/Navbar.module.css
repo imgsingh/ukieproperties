@@ -1,62 +1,143 @@
-/* Basic styling for the navbar */
+/* Navbar.module.css */
 .navbar {
-    background-color: #333;
-    /* Dark background color */
-    padding: 10px 0;
+    background-color: #1a1a1a;
+    color: white;
+    padding: 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    /* Ensure navbar stays on top */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .container {
-    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    height: 70px;
 }
 
-.logo {
-    font-size: 1.8rem;
-    color: white;
+/* Logo Styles */
+.logoLink {
     text-decoration: none;
-    font-weight: bold;
+    color: inherit;
+    display: flex;
+    align-items: center;
 }
 
+.horizontallogo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logoicon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.logotext {
+    flex-direction: column;
+    gap: 2px;
+}
+
+.companyname {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.ukpart {
+    color: #ff6b6b;
+}
+
+.irelandpart {
+    color: #4ecdc4;
+}
+
+.tagline {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #cccccc;
+    line-height: 1;
+}
+
+/* Navigation Styles */
 .navList {
     display: flex;
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
     margin: 0;
+    padding: 0;
+    align-items: center;
+    gap: 2rem;
 }
 
 .navItem {
-    margin-left: 20px;
+    position: relative;
 }
 
 .navLink {
     color: white;
     text-decoration: none;
-    font-size: 1.1rem;
-    transition: color 0.3s;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: block;
 }
 
 .navLink:hover {
-    color: #ff6f61;
-    /* Highlight color on hover */
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #4ecdc4;
 }
 
-/* Responsive navbar for smaller screens */
+.navLink:focus {
+    outline: 2px solid #4ecdc4;
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .navList {
-        flex-direction: column;
-        align-items: center;
+    .container {
+        padding: 0 0.5rem;
+        height: 60px;
     }
 
-    .navItem {
-        margin: 10px 0;
+    .companyname {
+        font-size: 1.2rem;
     }
+
+    .tagline {
+        font-size: 0.7rem;
+    }
+
+    .horizontallogo {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .companyname {
+        font-size: 1rem;
+    }
+
+    .tagline {
+        display: none;
+    }
+}
+
+/* Flag and house icon styles (if needed) */
+.flaguk,
+.flagireland,
+.houseicon {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
