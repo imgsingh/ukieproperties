@@ -124,6 +124,44 @@ export default function Navbar() {
                             </Menu>
                         </li>
                     </ul>
+
+                    {/* Auth Buttons */}
+                    <Box sx={{ display: "flex", gap: 1, ml: 2 }}>
+                        <Button
+                            variant="text"
+                            component={Link}
+                            href="/login"
+                            sx={{
+                                color: "white",
+                                textTransform: "none",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                '&:hover': {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }}
+                        >
+                            Log in
+                        </Button>
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            href="/signup"
+                            sx={{
+                                backgroundColor: "#00d4aa",
+                                color: "white",
+                                textTransform: "none",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                borderRadius: "4px",
+                                '&:hover': {
+                                    backgroundColor: "#00b894"
+                                }
+                            }}
+                        >
+                            Sign Up
+                        </Button>
+                    </Box>
                 </Box>
 
                 {/* Mobile Hamburger Menu */}
@@ -178,6 +216,30 @@ export default function Navbar() {
                                     <ListItemText primary={item.label} />
                                 </ListItem>
                             ))}
+
+                            {/* Auth buttons in mobile drawer */}
+                            <ListItem
+                                button
+                                component="a"
+                                href="/login"
+                                onClick={toggleDrawer(false)}
+                            >
+                                <ListItemText primary="Log in" />
+                            </ListItem>
+                            <ListItem
+                                button
+                                component="a"
+                                href="/signup"
+                                onClick={toggleDrawer(false)}
+                                sx={{
+                                    '& .MuiListItemText-primary': {
+                                        color: '#00d4aa',
+                                        fontWeight: 500
+                                    }
+                                }}
+                            >
+                                <ListItemText primary="Sign Up" />
+                            </ListItem>
                         </List>
                     </Box>
                 </Drawer>

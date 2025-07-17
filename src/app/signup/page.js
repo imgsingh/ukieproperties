@@ -103,7 +103,7 @@ export default function SignupPage() {
 
         setLoading(true);
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export default function SignupPage() {
                 // Set token in cookies for SSR
                 document.cookie = `token=${data.token}; path=/; max-age=86400; secure; samesite=strict`;
 
-                router.push('/dashboard');
+                router.push('/');
             } else {
                 setErrors({ general: data.message || 'Registration failed' });
             }
@@ -142,7 +142,7 @@ export default function SignupPage() {
         setGoogleLoading(true);
         try {
             // Initialize Google OAuth2 flow
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorize/google?redirect_uri=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/ukie/oauth2/authorize/google`;
         } catch (error) {
             console.error("Google signup error:", error);
             setErrors({ general: 'Google signup failed. Please try again.' });

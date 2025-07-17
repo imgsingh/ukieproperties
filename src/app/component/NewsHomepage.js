@@ -95,10 +95,10 @@ const NewsHomepage = () => {
         if (isNaN(numValue)) return;
 
         if (fromCurrency === 'GBP') {
-            const converted = (numValue * exchangeRates.GBP_EUR).toFixed(2);
+            const converted = (numValue * exchangeRates.EUR_GBP).toFixed(2);
             setEurAmount(converted);
         } else {
-            const converted = (numValue * exchangeRates.EUR_GBP).toFixed(2);
+            const converted = (numValue * exchangeRates.GBP_EUR).toFixed(2);
             setGbpAmount(converted);
         }
     };
@@ -287,11 +287,11 @@ const NewsHomepage = () => {
                                     <div className="flex justify-center gap-8">
                                         <div className="text-center">
                                             <div className="font-semibold text-gray-900">£1 GBP</div>
-                                            <div className="text-sm text-gray-600">= €{exchangeRates.GBP_EUR?.toFixed(4) || 'N/A'}</div>
+                                            <div className="text-sm text-gray-600">= €{exchangeRates.EUR_GBP?.toFixed(4) || 'N/A'}</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="font-semibold text-gray-900">€1 EUR</div>
-                                            <div className="text-sm text-gray-600">= £{exchangeRates.EUR_GBP?.toFixed(4) || 'N/A'}</div>
+                                            <div className="text-sm text-gray-600">= £{exchangeRates.GBP_EUR?.toFixed(4) || 'N/A'}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -22,7 +22,7 @@ export default function Page() {
             <Navbar />
             <StyledPaper>
                 <Typography variant="h4" sx={{ textAlign: "center", color: "#1976d2", fontWeight: "bold" }}>
-                    AI-Based Search
+                    Map Based Search
                 </Typography>
                 <Map />
             </StyledPaper>
