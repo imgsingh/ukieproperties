@@ -91,7 +91,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
 
                 const backendCoordinates = e.layer.editing.latlngs[0][0].map(latLng => [latLng.lng, latLng.lat]);
 
-                fetch('http://localhost:8080/ukie/getPropertiesByPolygonSearch', {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getPropertiesByPolygonSearch`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -135,7 +135,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                 const token = localStorage.getItem('token');
 
                 // Example API call using bounding box coordinates
-                fetch("http://localhost:8080/ukie/getPropertiesByLatLong", {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getPropertiesByLatLong`, {
                     method: "POST",
                     credentials: 'include',
                     headers: {

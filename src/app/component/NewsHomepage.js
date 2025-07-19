@@ -16,7 +16,7 @@ const NewsHomepage = () => {
     useEffect(() => {
         const fetchNewsData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/ukie/api/news');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/news`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -31,7 +31,7 @@ const NewsHomepage = () => {
 
         const fetchExchangeRates = async () => {
             try {
-                const response = await fetch('http://localhost:8080/ukie/api/exchange-rates');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

@@ -47,7 +47,7 @@ const Page = () => {
     const onSearch = async (query) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:8080/ukie/aiSearchProperties', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/aiSearchProperties`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -75,7 +75,7 @@ const Page = () => {
         try {
             const token = localStorage.getItem('token');
             // Replace with your actual API endpoint to fetch property description
-            const response = await fetch(`http://localhost:8080/ukie/propertyDescription/${property.id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/propertyDescription/${property.id}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -129,7 +129,7 @@ const Page = () => {
         try {
             // Replace with your actual AI endpoint
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:8080/ukie/aiPropertyChat', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/aiPropertyChat`, {
                 credentials: 'include',
                 method: 'POST',
                 headers: {

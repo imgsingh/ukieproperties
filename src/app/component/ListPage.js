@@ -73,7 +73,7 @@ const ListPage = () => {
 
     const handleSearch = () => {
         const token = localStorage.getItem('token');
-        fetch("http://localhost:8080/ukie/searchProperties", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/searchProperties`, {
             credentials: 'include',
             method: "POST",
             headers: {
@@ -152,7 +152,7 @@ const ListPage = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        fetch("http://localhost:8080/ukie/getCounties", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getCounties`, {
             method: "GET",
             credentials: 'include',
             headers: {
