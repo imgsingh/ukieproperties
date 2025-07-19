@@ -71,13 +71,16 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
 
 
             function performAPICallForPolygonSearch(e) {
+                const token = localStorage.getItem('token');
 
                 const backendCoordinates = e.layer.editing.latlngs[0][0].map(latLng => [latLng.lng, latLng.lat]);
 
                 fetch('http://localhost:8080/ukie/getPropertiesByPolygonSearch', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         polygon: backendCoordinates.map(coords => ({ // Format as GeoJSON
@@ -86,7 +89,14 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                         }))
                     }),
                 })
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.status === 401) {
+                            // Token expired or invalid, redirect to login
+                            window.location.href = '/login';
+                            return;
+                        }
+                        return response.json();
+                    })
                     .then((data) => {
                         setProperties(data);
                     })
@@ -106,10 +116,16 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                     southWest = { lat: layer._latlng.lat, lng: layer._latlng.lng };
                 }
 
+                const token = localStorage.getItem('token');
+
                 // Example API call using bounding box coordinates
                 fetch("http://localhost:8080/ukie/getPropertiesByLatLong", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    credentials: 'include',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify({
                         northEastLat: northEast.lat,
                         northEastLng: northEast.lng,
@@ -117,7 +133,14 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                         southWestLng: southWest.lng,
                     }),
                 })
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.status === 401) {
+                            // Token expired or invalid, redirect to login
+                            window.location.href = '/login';
+                            return;
+                        }
+                        return response.json();
+                    })
                     .then((data) => {
                         setProperties(data); // Only update when necessary
                     })

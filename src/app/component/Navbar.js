@@ -1,8 +1,7 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "../styles/Navbar.module.css";
-import image from '../assets/images/house-icon.png'
 import {
     Drawer,
     IconButton,
@@ -11,16 +10,31 @@ import {
     ListItemText,
     Menu,
     MenuItem,
-    Button
+    Button,
+    Avatar,
+    Box,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box } from "@mui/system";
-import { SearchIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+    const router = useRouter();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // Check if the user is logged in
+        const token = localStorage.getItem("token");
+        const userData = localStorage.getItem("user");
+        if (token && userData) {
+            setIsLoggedIn(true);
+            setUser(JSON.parse(userData));
+        }
+    }, []);
 
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -30,21 +44,246 @@ export default function Navbar() {
         setAnchorEl(null);
     };
 
+    const handleUserMenuOpen = (event) => {
+        setUserMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleUserMenuClose = () => {
+        setUserMenuAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        // Clear user data and token
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+        setUser(null);
+        handleUserMenuClose();
+        router.push("/");
+    };
+
     const toggleDrawer = (open) => () => {
         setIsDrawerOpen(open);
     };
 
-    // Navigation items for reusability
-    const navItems = [
-        { href: "/", label: "Home" },
-        { href: "/about", label: "About Us" }
+    // Base navigation items
+    const baseNavItems = [
+        {
+            type: "link",
+            href: "/",
+            label: "Home"
+        },
+        {
+            type: "link",
+            href: "/about",
+            label: "About Us"
+        },
     ];
 
     const searchItems = [
         { href: "/map-search", label: "Map Search" },
         { href: "/list-search", label: "List Search" },
-        { href: "/advance-search", label: "Advanced Search" }
+        { href: "/advance-search", label: "Advanced Search" },
     ];
+
+    // Build navigation array based on login status
+    const buildNavItems = () => {
+        const navItems = [...baseNavItems];
+
+        // Add search properties dropdown if logged in
+        if (isLoggedIn) {
+            navItems.push({
+                type: "dropdown",
+                label: "Search Properties",
+                items: searchItems,
+                onClick: handleMenuOpen,
+                anchorEl: anchorEl,
+                onClose: handleMenuClose,
+            });
+        }
+
+        // Add auth items
+        if (isLoggedIn) {
+            navItems.push({
+                type: "userAvatar",
+                user: user,
+                onClick: handleUserMenuOpen,
+                anchorEl: userMenuAnchorEl,
+                onClose: handleUserMenuClose,
+                onLogout: handleLogout,
+            });
+        } else {
+            navItems.push({
+                type: "authButtons",
+                buttons: [
+                    {
+                        type: "text",
+                        href: "/login",
+                        label: "Log in",
+                    },
+                    {
+                        type: "contained",
+                        href: "/signup",
+                        label: "Sign Up",
+                    },
+                ],
+            });
+        }
+
+        return navItems;
+    };
+
+    const navItems = buildNavItems();
+
+    // Render navigation item based on type
+    const renderNavItem = (item, index) => {
+        switch (item.type) {
+            case "link":
+                return (
+                    <li key={item.href} className={styles.navItem}>
+                        <Link href={item.href} className={styles.navLink}>
+                            {item.label}
+                        </Link>
+                    </li>
+                );
+
+            case "dropdown":
+                return (
+                    <li key="search-dropdown" className={styles.navItem}>
+                        <Button
+                            color="inherit"
+                            onClick={item.onClick}
+                            endIcon={<ExpandMoreIcon />}
+                            sx={{
+                                color: "white",
+                                textTransform: "none",
+                                fontSize: "inherit",
+                                fontWeight: "inherit",
+                                "&:hover": {
+                                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                },
+                            }}
+                        >
+                            {item.label}
+                        </Button>
+                        <Menu
+                            anchorEl={item.anchorEl}
+                            open={Boolean(item.anchorEl)}
+                            onClose={item.onClose}
+                            MenuListProps={{
+                                "aria-labelledby": "search-button",
+                            }}
+                        >
+                            {item.items.map((searchItem) => (
+                                <MenuItem
+                                    key={searchItem.href}
+                                    onClick={item.onClose}
+                                    component="a"
+                                    href={searchItem.href}
+                                >
+                                    {searchItem.label}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </li>
+                );
+
+            case "userAvatar":
+                return (
+                    <li key="user-avatar" className={styles.navItem}>
+                        <IconButton onClick={item.onClick}>
+                            <Avatar alt={item.user?.name || "User"} src={item.user?.avatar || ""} />
+                        </IconButton>
+                        <Menu
+                            anchorEl={item.anchorEl}
+                            open={Boolean(item.anchorEl)}
+                            onClose={item.onClose}
+                        >
+                            <MenuItem onClick={item.onLogout}>Logout</MenuItem>
+                        </Menu>
+                    </li>
+                );
+
+            case "authButtons":
+                return (
+                    <li key="auth-buttons" className={styles.navItem}>
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                            {item.buttons.map((button, btnIndex) => (
+                                <Button
+                                    key={button.href}
+                                    variant={button.type}
+                                    component={Link}
+                                    href={button.href}
+                                    sx={{
+                                        color: "white",
+                                        textTransform: "none",
+                                        fontSize: "14px",
+                                        fontWeight: 500,
+                                        ...(button.type === "contained"
+                                            ? {
+                                                backgroundColor: "#00d4aa",
+                                                borderRadius: "4px",
+                                                "&:hover": {
+                                                    backgroundColor: "#00b894",
+                                                },
+                                            }
+                                            : {
+                                                "&:hover": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                                },
+                                            }),
+                                    }}
+                                >
+                                    {button.label}
+                                </Button>
+                            ))}
+                        </Box>
+                    </li>
+                );
+
+            default:
+                return null;
+        }
+    };
+
+    // Build mobile drawer items
+    const buildMobileDrawerItems = () => {
+        const mobileItems = [...baseNavItems];
+
+        // Add search items for mobile
+        mobileItems.push(...searchItems.map(item => ({
+            type: "link",
+            href: item.href,
+            label: item.label,
+        })));
+
+        // Add auth items for mobile
+        if (isLoggedIn) {
+            mobileItems.push({
+                type: "button",
+                label: "Logout",
+                onClick: handleLogout,
+            });
+        } else {
+            mobileItems.push(
+                {
+                    type: "link",
+                    href: "/login",
+                    label: "Log in",
+                },
+                {
+                    type: "link",
+                    href: "/signup",
+                    label: "Sign Up",
+                    highlighted: true,
+                }
+            );
+        }
+
+        return mobileItems;
+    };
+
+    const mobileDrawerItems = buildMobileDrawerItems();
 
     return (
         <nav className={styles.navbar}>
@@ -52,12 +291,7 @@ export default function Navbar() {
                 {/* Logo Section */}
                 <Link href="/" className={styles.logoLink}>
                     <div className={styles.horizontallogo}>
-                        <div className={styles.logoicon}>
-                            {/* Uncomment and style these as needed */}
-                            {/* <div className={styles.flaguk}></div>
-                            <div className={styles.flagireland}></div>
-                            <div className={styles.houseicon}></div> */}
-                        </div>
+                        <div className={styles.logoicon}></div>
                         <div className={styles.logotext}>
                             <h1 className={styles.companyname}>
                                 <span className={styles.ukpart}>UK</span>
@@ -73,95 +307,11 @@ export default function Navbar() {
                     sx={{
                         display: { xs: "none", sm: "flex" },
                         alignItems: "center",
-                        gap: 2
                     }}
                 >
                     <ul className={styles.navList}>
-                        {navItems.map((item) => (
-                            <li key={item.href} className={styles.navItem}>
-                                <Link href={item.href} className={styles.navLink}>
-                                    {item.label}
-                                </Link>
-                            </li>
-                        ))}
-
-                        <li className={styles.navItem}>
-                            {/* Search Dropdown */}
-                            <Button
-                                color="inherit"
-                                onClick={handleMenuOpen}
-                                endIcon={<ExpandMoreIcon />}
-                                sx={{
-                                    color: "white",
-                                    textTransform: "none",
-                                    fontSize: "inherit",
-                                    fontWeight: "inherit",
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                                    }
-                                }}
-                            >
-                                Search Properties
-                            </Button>
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleMenuClose}
-                                MenuListProps={{
-                                    'aria-labelledby': 'search-button',
-                                }}
-                            >
-                                {searchItems.map((item) => (
-                                    <MenuItem
-                                        key={item.href}
-                                        onClick={handleMenuClose}
-                                        component="a"
-                                        href={item.href}
-                                    >
-                                        {item.label}
-                                    </MenuItem>
-                                ))}
-                            </Menu>
-                        </li>
+                        {navItems.map((item, index) => renderNavItem(item, index))}
                     </ul>
-
-                    {/* Auth Buttons */}
-                    <Box sx={{ display: "flex", gap: 1, ml: 2 }}>
-                        <Button
-                            variant="text"
-                            component={Link}
-                            href="/login"
-                            sx={{
-                                color: "white",
-                                textTransform: "none",
-                                fontSize: "14px",
-                                fontWeight: 500,
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                                }
-                            }}
-                        >
-                            Log in
-                        </Button>
-                        <Button
-                            variant="contained"
-                            component={Link}
-                            href="/signup"
-                            sx={{
-                                backgroundColor: "#00d4aa",
-                                color: "white",
-                                textTransform: "none",
-                                fontSize: "14px",
-                                fontWeight: 500,
-                                borderRadius: "4px",
-                                '&:hover': {
-                                    backgroundColor: "#00b894"
-                                }
-                            }}
-                        >
-                            Sign Up
-                        </Button>
-                    </Box>
                 </Box>
 
                 {/* Mobile Hamburger Menu */}
@@ -173,7 +323,7 @@ export default function Navbar() {
                     sx={{
                         display: { xs: "block", sm: "none" },
                         color: "white",
-                        ml: "auto"
+                        ml: "auto",
                     }}
                 >
                     <MenuIcon />
@@ -187,59 +337,33 @@ export default function Navbar() {
                     PaperProps={{
                         sx: {
                             width: 250,
-                            bgcolor: 'background.paper'
-                        }
+                            bgcolor: "background.paper",
+                        },
                     }}
                 >
                     <Box sx={{ pt: 2 }}>
                         <List>
-                            {navItems.map((item) => (
+                            {mobileDrawerItems.map((item, index) => (
                                 <ListItem
-                                    key={item.href}
+                                    key={item.href || item.label}
                                     button
-                                    component="a"
+                                    component={item.type === "button" ? "div" : "a"}
                                     href={item.href}
-                                    onClick={toggleDrawer(false)}
-                                >
-                                    <ListItemText primary={item.label} />
-                                </ListItem>
-                            ))}
-
-                            {searchItems.map((item) => (
-                                <ListItem
-                                    key={item.href}
-                                    button
-                                    component="a"
-                                    href={item.href}
-                                    onClick={toggleDrawer(false)}
-                                >
-                                    <ListItemText primary={item.label} />
-                                </ListItem>
-                            ))}
-
-                            {/* Auth buttons in mobile drawer */}
-                            <ListItem
-                                button
-                                component="a"
-                                href="/login"
-                                onClick={toggleDrawer(false)}
-                            >
-                                <ListItemText primary="Log in" />
-                            </ListItem>
-                            <ListItem
-                                button
-                                component="a"
-                                href="/signup"
-                                onClick={toggleDrawer(false)}
-                                sx={{
-                                    '& .MuiListItemText-primary': {
-                                        color: '#00d4aa',
-                                        fontWeight: 500
+                                    onClick={item.onClick || toggleDrawer(false)}
+                                    sx={
+                                        item.highlighted
+                                            ? {
+                                                "& .MuiListItemText-primary": {
+                                                    color: "#00d4aa",
+                                                    fontWeight: 500,
+                                                },
+                                            }
+                                            : {}
                                     }
-                                }}
-                            >
-                                <ListItemText primary="Sign Up" />
-                            </ListItem>
+                                >
+                                    <ListItemText primary={item.label} />
+                                </ListItem>
+                            ))}
                         </List>
                     </Box>
                 </Drawer>

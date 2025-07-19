@@ -77,6 +77,7 @@ export default function Page() {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/auth/login`, {
                 method: 'POST',
+                credentials: 'include', // Include cookies for SSR
                 headers: {
                     'Content-Type': 'application/json',
                 },
