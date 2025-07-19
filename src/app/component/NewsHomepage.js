@@ -230,7 +230,7 @@ const NewsHomepage = () => {
                     </div>
                 </div>
 
-                {/* Secondary News Grid */}
+                {/* Secondary News Grid
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     {newsData.slice(0, 6).map((article, index) => (
                         <div key={`grid-${article.id}`} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
@@ -268,7 +268,7 @@ const NewsHomepage = () => {
                             </div>
                         </div>
                     ))}
-                </div>
+                </div> */}
 
                 {/* Currency Converter */}
                 <div className="bg-white rounded-xl shadow-lg p-8">

@@ -72,9 +72,14 @@ const ListPage = () => {
 
 
     const handleSearch = () => {
+        const token = localStorage.getItem('token');
         fetch("http://localhost:8080/ukie/searchProperties", {
+            credentials: 'include',
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify({
                 county: selectedCounty,
                 sr: searchRadius,
@@ -84,7 +89,14 @@ const ListPage = () => {
                 keyword: keyword
             })
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response?.status !== 200) {
+                    // Token expired or invalid, redirect to login
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
             .then((data) => {
                 setProperties(data)
                 if (data.length == 0) {
@@ -139,11 +151,23 @@ const ListPage = () => {
     }, [sortedProperties, page, rowsPerPage]);
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
         fetch("http://localhost:8080/ukie/getCounties", {
             method: "GET",
-            headers: { "Content-Type": "application/json" }
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            }
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response?.status !== 200) {
+                    // Token expired or invalid, redirect to login
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
             .then((data) => {
                 setCounties(data); // Only update when necessary
             })
@@ -161,8 +185,17 @@ const ListPage = () => {
             <StyledPaper elevation={3}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
-                        <Typography variant="h5" component="h2">
-                            Search Properties
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                textAlign: 'center',
+                                marginTop: '20px',
+                                marginBottom: '20px',
+                                color: '#1976d2',
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            List Based Search
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>

@@ -192,7 +192,7 @@ export default function Navbar() {
                 return (
                     <li key="user-avatar" className={styles.navItem}>
                         <IconButton onClick={item.onClick}>
-                            <Avatar alt={item.user?.name || "User"} src={item.user?.avatar || ""} />
+                            <Avatar alt={item.user?.firstName || "User"} src={item.user?.avatar || ""} />
                         </IconButton>
                         <Menu
                             anchorEl={item.anchorEl}

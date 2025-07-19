@@ -46,15 +46,19 @@ const Page = () => {
 
     const onSearch = async (query) => {
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/ukie/aiSearchProperties', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ query }),
             });
 
             if (!response.ok) {
+                window.location.href = '/login';
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -69,15 +73,19 @@ const Page = () => {
     const fetchPropertyDescription = async (property) => {
         setIsLoadingDescription(true);
         try {
+            const token = localStorage.getItem('token');
             // Replace with your actual API endpoint to fetch property description
             const response = await fetch(`http://localhost:8080/ukie/propertyDescription/${property.id}`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
             });
 
             if (!response.ok) {
+                window.location.href = '/login';
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -120,10 +128,13 @@ const Page = () => {
     const sendMessageToAI = async (message, propertyContext) => {
         try {
             // Replace with your actual AI endpoint
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:8080/ukie/aiPropertyChat', {
+                credentials: 'include',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     message: message,
@@ -133,6 +144,7 @@ const Page = () => {
             });
 
             if (!response.ok) {
+                window.location.href = '/login';
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 

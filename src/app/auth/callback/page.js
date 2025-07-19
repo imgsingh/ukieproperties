@@ -1,12 +1,12 @@
-// pages/auth/callback.js
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react'; // Import Suspense
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CircularProgress, Box, Typography, Alert } from '@mui/material';
 
-export default function page() {
-    const router = useRouter();
+// Create a separate component that uses useSearchParams
+function AuthCallbackContent() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('Processing...');
 
@@ -65,11 +65,8 @@ export default function page() {
                 setTimeout(() => router.push('/login?error=no_token'), 3000);
             }
         };
-
-        // In App Router, we don't need to wait for router.isReady
-        // The component only renders when searchParams are available
         handleCallback();
-    }, [router, searchParams]);
+    }, [router, searchParams]); // Add searchParams to dependency array as it's a hook dependency
 
     return (
         <Box
@@ -99,5 +96,26 @@ export default function page() {
                 </>
             )}
         </Box>
+    );
+}
+
+export default function PageWrapper() {
+    return (
+        <Suspense fallback={
+            <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                minHeight="100vh"
+                gap={2}
+                sx={{ p: 3 }}
+            >
+                <CircularProgress size={60} />
+                <Typography variant="h6">Loading...</Typography>
+            </Box>
+        }>
+            <AuthCallbackContent />
+        </Suspense>
     );
 }

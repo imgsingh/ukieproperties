@@ -20,11 +20,27 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
 
     // Memoize the properties array to prevent unnecessary re-renders
     const memoizedProperties = useMemo(() => {
-        return properties.map((point) => ({
-            ...point,
-            position: [point.location.coordinates[1], point.location.coordinates[0]],
-        }));
-    }, [properties]); // Only recompute if `properties` changes
+        // Handle specific error object case (e.g., if properties is { status: 403 })
+        if (properties?.status === 403) {
+            console.error('Access forbidden: ', properties?.status);
+            return []; // Return an empty array if access is forbidden
+        }
+
+        // Check if properties is an array before mapping
+        if (Array.isArray(properties)) {
+            return properties.map((point) => ({
+                ...point,
+                position: [point.location.coordinates[1], point.location.coordinates[0]],
+            }));
+        }
+
+        // If properties is not an array (e.g., undefined, null, or other unexpected type)
+        // during initial load or an error, return an empty array.
+        setProperties([]) // Reset properties to an empty array if it's not valid
+        console.warn('Properties is not an array or is undefined:', properties);
+        return [];
+
+    }, [properties]);
 
     const handleMapCreated = () => {
         console.log('Map has been created');
@@ -90,7 +106,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                     }),
                 })
                     .then((response) => {
-                        if (response.status === 401) {
+                        if (response?.status !== 200) {
                             // Token expired or invalid, redirect to login
                             window.location.href = '/login';
                             return;
@@ -134,7 +150,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                     }),
                 })
                     .then((response) => {
-                        if (response.status === 401) {
+                        if (response?.status !== 200) {
                             // Token expired or invalid, redirect to login
                             window.location.href = '/login';
                             return;
@@ -187,7 +203,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                 ))}
                 <MapLayer setProperties={setProperties} />
             </MapContainer>
-            {properties.length > 0 && (
+            {properties?.length > 0 && (
                 <Box
                     sx={{
                         display: 'flex',
