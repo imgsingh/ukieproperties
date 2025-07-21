@@ -16,7 +16,15 @@ const NewsHomepage = () => {
     useEffect(() => {
         const fetchNewsData = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/news`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/news`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any required headers here if needed
+                        // 'Authorization': 'Bearer your-token',
+                        // 'X-API-Key': 'your-api-key',
+                    },
+                });
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -31,7 +39,17 @@ const NewsHomepage = () => {
 
         const fetchExchangeRates = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any required headers here if needed
+                        // 'Authorization': 'Bearer your-token',
+                        // 'X-API-Key': 'your-api-key',
+                    },
+                });
+
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
