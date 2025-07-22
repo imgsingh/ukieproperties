@@ -18,11 +18,11 @@ const NewsHomepage = () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/news`, {
                     method: 'GET',
-                    credentials: 'include',
+                    //credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': '*/*',
-                        'Authorization': 'Bearer your-token',
+                        //'Accept': '*/*',
+                        //'Authorization': 'Bearer your-token',
                     },
                 });
                 if (!response.ok) {
@@ -41,11 +41,11 @@ const NewsHomepage = () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`, {
                     method: 'GET',
-                    credentials: 'include',
+                    //credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': '*/*',
-                        'Authorization': 'Bearer your-token',
+                        //'Accept': '*/*',
+                        //'Authorization': 'Bearer your-token',
                     },
                 });
 
