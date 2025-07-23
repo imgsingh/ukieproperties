@@ -5,6 +5,28 @@ import { Box, Button } from '@mui/material'; // Assuming you're using Material-U
 import PropertiesDialog from './PropertiesDialog'; // Adjust the import based on your file structure
 import { styled } from '@mui/system';
 
+// Import Leaflet CSS to ensure it's loaded
+import 'leaflet/dist/leaflet.css';
+
+// Create a custom icon with CDN URLs - this is more explicit for TypeScript
+const customIcon = new L.Icon({
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+// Fix default icons as backup
+delete (L.Icon.Default.prototype)._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
+
 const StyledButton = styled(Button)(({ theme }) => ({
     marginTop: theme.spacing(4),
     backgroundColor: '#1976d2',
@@ -84,7 +106,6 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                     performAPICallSearch(e);
                 }
             });
-
 
             function performAPICallForPolygonSearch(e) {
                 const token = localStorage.getItem('token');
@@ -191,7 +212,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
                 {memoizedProperties.map((point, index) => (
-                    <Marker key={index} position={point.position}>
+                    <Marker key={index} position={point.position} icon={customIcon}>
                         <Popup>
                             Address - {point.address}
                             <br />
