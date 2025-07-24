@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Clock, ExternalLink, Play, Pause, ArrowRightLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, ExternalLink, Play, Pause, ArrowRightLeft, ArrowRight } from 'lucide-react';
 
 const NewsHomepage = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -12,6 +12,12 @@ const NewsHomepage = () => {
     const [gbpAmount, setGbpAmount] = useState('');
     const [eurAmount, setEurAmount] = useState('');
     const [convertFrom, setConvertFrom] = useState('GBP'); // GBP or EUR
+    const [properties, setProperties] = useState([]);
+    const [loadingProperties, setLoadingProperties] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
 
     useEffect(() => {
         const fetchNewsData = async () => {
@@ -34,6 +40,22 @@ const NewsHomepage = () => {
                 console.error('Error fetching news:', err.message);
             } finally {
                 setLoading(false);
+            }
+        };
+
+        const fetchRecentProperties = async () => {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/ukie/getRecentProperties`,
+                    { method: 'GET', headers: { 'Content-Type': 'application/json' } }
+                );
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                setProperties(data);
+            } catch (err) {
+                console.error('Error fetching properties:', err.message);
+            } finally {
+                setLoadingProperties(false);
             }
         };
 
@@ -63,8 +85,17 @@ const NewsHomepage = () => {
         };
 
         fetchNewsData();
+        fetchRecentProperties();
         fetchExchangeRates();
     }, []);
+
+    useEffect(() => {
+        if (token && userData) {
+            setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }, [token]);
 
     const nextSlide = () => {
         setCurrentSlide((prev) => (prev + 1) % newsData.length);
@@ -287,6 +318,53 @@ const NewsHomepage = () => {
                         </div>
                     ))}
                 </div> */}
+
+                {/* Recent Properties Section */}
+                {!isLoggedIn && <div className="mb-12">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-6">Latest Properties</h2>
+
+                    {loadingProperties ? (
+                        <div className="flex justify-center items-center py-12">
+                            <div className="text-lg text-gray-600">Loading properties...</div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                                {properties.slice(0, 5).map((p) => (
+                                    <div
+                                        key={p.id}
+                                        className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden"
+                                    >
+                                        <img
+                                            src={
+                                                p.mainPhoto?.startsWith('http')
+                                                    ? p.mainPhoto
+                                                    : 'https://via.placeholder.com/400x250?text=No+Image'
+                                            }
+                                            alt={p.displayAddress}
+                                            className="w-full h-48 object-cover"
+                                        />
+                                        <div className="p-4">
+                                            <h3 className="font-bold text-gray-900 mb-1 truncate">{p.displayAddress}</h3>
+                                            <p className="text-sm text-gray-600 mb-2 truncate">{p.propertyType}</p>
+                                            <p className="text-lg font-semibold text-blue-600">{p.price}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="text-center mt-8">
+                                <a
+                                    href="/signup"
+                                    className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                                >
+                                    Sign up today for accessing all features
+                                    <ArrowRight className="w-4 h-4 ml-2" />
+                                </a>
+                            </div>
+                        </>
+                    )}
+                </div>}
 
                 {/* Currency Converter */}
                 <div className="bg-white rounded-xl shadow-lg p-8">
