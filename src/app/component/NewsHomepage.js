@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, ExternalLink, Play, Pause, ArrowRightLeft, ArrowRight } from 'lucide-react';
+import PropertyAnalyticsDashboard from '../component/PropertyAnalyticsDashboard'
 
 const NewsHomepage = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -278,6 +279,8 @@ const NewsHomepage = () => {
                         ))}
                     </div>
                 </div>
+
+                <PropertyAnalyticsDashboard />
 
                 {/* Secondary News Grid
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

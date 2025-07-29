@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Box, Button } from '@mui/material'; // Assuming you're using Material-UI
-import PropertiesDialog from './PropertiesDialog'; // Adjust the import based on your file structure
+import { Box } from '@mui/material';
+import PropertyTable from './PropertyTable'; // Import the common table component
 import { styled } from '@mui/system';
 
 // Import Leaflet CSS to ensure it's loaded
@@ -27,16 +27,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-const StyledButton = styled(Button)(({ theme }) => ({
-    marginTop: theme.spacing(4),
-    backgroundColor: '#1976d2',
-    color: 'white',
-    '&:hover': {
-        backgroundColor: '#1565c0',
-    },
-}));
-
-const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
+const MyMapComponent = () => {
     const mapRef = useRef(null);
     const [properties, setProperties] = useState([]);
 
@@ -203,7 +194,7 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
             <MapContainer
                 center={[53.3810, -6.5900]}
                 zoom={13}
-                style={{ height: "450px", width: "100%", borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} // Add borderRadius and shadow
+                style={{ height: "450px", width: "100%", borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
                 whenReady={handleMapCreated}
                 ref={mapRef}
             >
@@ -224,23 +215,11 @@ const MyMapComponent = ({ handleOpenPopup, handleClosePopup, openPopup }) => {
                 ))}
                 <MapLayer setProperties={setProperties} />
             </MapContainer>
-            {properties?.length > 0 && (
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '100%',
-                    }}
-                >
-                    <StyledButton variant="contained" onClick={handleOpenPopup}>
-                        List Results
-                    </StyledButton>
-                </Box>
-            )}
-            <PropertiesDialog properties={properties} handleClosePopup={handleClosePopup} openPopup={openPopup} />
+
+            {/* Use the common PropertyTable component - no AI chat for map */}
+            <PropertyTable properties={properties} showAiChat={false} />
         </>
     );
 };
 
-export default React.memo(MyMapComponent); // Memoize the entire component
+export default React.memo(MyMapComponent);

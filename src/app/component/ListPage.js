@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react';
 import toastr from '../utils/toastrConfig';
+import PropertyTable from './../component/PropertyTable'; // Import the common table component
 import {
     Box,
     Button,
@@ -11,14 +12,6 @@ import {
     Typography,
     Paper,
     Autocomplete,
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    TablePagination,
-    InputAdornment
 } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -32,10 +25,7 @@ const ListPage = () => {
     const [keyword, setKeyword] = useState("");
     const [properties, setProperties] = useState([]);
     const [isClient, setIsClient] = useState(false);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [sortOption, setSortOption] = useState('address-asc');
-
 
     const StyledPaper = styled(Paper)(({ theme }) => ({
         borderRadius: theme.spacing(2),
@@ -53,23 +43,6 @@ const ListPage = () => {
             backgroundColor: '#1565c0',
         },
     }));
-
-    const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: theme.spacing(1),
-    }));
-
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        padding: theme.spacing(2),
-        borderBottom: '1px solid rgba(224, 224, 224, 1)',
-    }));
-
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(odd)': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)',
-        },
-    }));
-
 
     const handleSearch = () => {
         const token = localStorage.getItem('token');
@@ -108,17 +81,6 @@ const ListPage = () => {
             );
     };
 
-    // Handle page change
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    // Handle rows per page change
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
     function extractNumbers(str) {
         const cleanedStr = str.replace(/,/g, ''); // Remove all commas
         const matches = cleanedStr.match(/[-+]?\d*\.\d+|\d+/g);
@@ -145,10 +107,6 @@ const ListPage = () => {
         }
         return sorted;
     }, [properties, sortOption]);
-
-    const displayedProperties = useMemo(() => {
-        return sortedProperties.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-    }, [sortedProperties, page, rowsPerPage]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -291,7 +249,6 @@ const ListPage = () => {
                                 <MenuItem value="12">12</MenuItem>
                                 <MenuItem value="13">13</MenuItem>
                                 <MenuItem value="14">14</MenuItem>
-
                             </Select>
                             {"-"}
                             <Select
@@ -332,8 +289,10 @@ const ListPage = () => {
                         Search Properties
                     </StyledButton>
                 </Box>
-            </StyledPaper >
-            {displayedProperties.length > 0 &&
+            </StyledPaper>
+
+            {/* Sort option and table section */}
+            {sortedProperties.length > 0 && (
                 <Box>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', margin: 2, mt: 2 }}>
                         <Typography variant="subtitle1" sx={{ mb: 1, marginTop: 2, marginRight: 2 }}>
@@ -350,48 +309,12 @@ const ListPage = () => {
                             <MenuItem value={"price-desc"}>Price High to Low</MenuItem>
                         </Select>
                     </Box>
-                    <StyledTableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell>Image</StyledTableCell>
-                                    <StyledTableCell>Address</StyledTableCell>
-                                    <StyledTableCell>Price</StyledTableCell>
-                                    <StyledTableCell>View Details</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {displayedProperties.map((property, index) => (
-                                    <StyledTableRow key={index}>
 
-                                        <StyledTableCell>
-                                            <img src={property.mainPhoto} alt="Property" width="300" height="300" style={{ borderRadius: '8px' }} />
-                                        </StyledTableCell>
-                                        <StyledTableCell>{property.address}</StyledTableCell>
-                                        <StyledTableCell>{property.price}</StyledTableCell>
-                                        <StyledTableCell>
-                                            <StyledButton variant="contained" onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}>
-                                                View
-                                            </StyledButton>
-                                        </StyledTableCell>
-                                    </StyledTableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </StyledTableContainer>
-                    {/* Pagination Component */}
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={properties.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
+                    {/* Use the common PropertyTable component - no AI chat for list page */}
+                    <PropertyTable properties={sortedProperties} showAiChat={false} />
                 </Box>
-            }
-        </Box >
+            )}
+        </Box>
     );
 };
 

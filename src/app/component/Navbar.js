@@ -77,7 +77,7 @@ export default function Navbar() {
             type: "link",
             href: "/about",
             label: "About Us"
-        },
+        }
     ];
 
     const searchItems = [
@@ -92,6 +92,12 @@ export default function Navbar() {
 
         // Add search properties dropdown if logged in
         if (isLoggedIn) {
+            navItems.push({
+                type: "link",
+                href: "/dashboard",
+                label: "Dashboard"
+            })
+
             navItems.push({
                 type: "dropdown",
                 label: "Search Properties",
@@ -250,15 +256,22 @@ export default function Navbar() {
     const buildMobileDrawerItems = () => {
         const mobileItems = [...baseNavItems];
 
-        // Add search items for mobile
-        mobileItems.push(...searchItems.map(item => ({
-            type: "link",
-            href: item.href,
-            label: item.label,
-        })));
-
         // Add auth items for mobile
         if (isLoggedIn) {
+
+            mobileItems.push({
+                type: "link",
+                href: "/dashboard",
+                label: "Dashboard"
+            });
+
+            // Add search items for mobile
+            mobileItems.push(...searchItems.map(item => ({
+                type: "link",
+                href: item.href,
+                label: item.label,
+            })));
+
             mobileItems.push({
                 type: "button",
                 label: "Logout",
