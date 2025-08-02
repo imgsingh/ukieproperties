@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     TableContainer,
@@ -21,8 +21,20 @@ import {
     ListItem,
     CircularProgress,
     Divider,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Chip,
+    Tooltip,
 } from '@mui/material';
-import { Close as CloseIcon, Send as SendIcon, SmartToy as BotIcon } from '@mui/icons-material';
+import {
+    Close as CloseIcon,
+    Send as SendIcon,
+    SmartToy as BotIcon,
+    CurrencyExchange as CurrencyIcon,
+    Refresh as RefreshIcon
+} from '@mui/icons-material';
 
 const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const [page, setPage] = useState(0);
@@ -37,6 +49,83 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const [isLoadingDescription, setIsLoadingDescription] = useState(false);
     const [isLoadingResponse, setIsLoadingResponse] = useState(false);
 
+    // Currency converter states
+    const [exchangeRates, setExchangeRates] = useState({ EUR_GBP: 1, GBP_EUR: 1 });
+    const [displayCurrency, setDisplayCurrency] = useState('GBP'); // GBP or EUR
+    const [loadingRates, setLoadingRates] = useState(false);
+    const [ratesLastUpdated, setRatesLastUpdated] = useState(null);
+
+    // Fetch exchange rates
+    const fetchExchangeRates = async () => {
+        setLoadingRates(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`, {
+                method: 'GET',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setExchangeRates(data);
+            setRatesLastUpdated(new Date());
+        } catch (error) {
+            console.error('Error fetching exchange rates:', error);
+            // Keep default rates if fetch fails
+        } finally {
+            setLoadingRates(false);
+        }
+    };
+
+    // Load exchange rates on component mount
+    useEffect(() => {
+        fetchExchangeRates();
+    }, []);
+
+    // Convert price based on selected currency
+    const convertPrice = (priceString) => {
+        if (!priceString || !exchangeRates) return priceString;
+
+        // Extract numeric value from price string (assuming format like "£500,000" or "€600,000")
+        const numericValue = parseFloat(priceString.replace(/[£€,]/g, ''));
+
+        if (isNaN(numericValue)) return priceString;
+
+        // Determine original currency from the price string
+        const isOriginallyGBP = priceString.includes('£');
+        const isOriginallyEUR = priceString.includes('€');
+
+        let convertedValue = numericValue;
+        let symbol = '£';
+
+        if (displayCurrency === 'EUR') {
+            symbol = '€';
+            if (isOriginallyGBP) {
+                // Convert GBP to EUR
+                convertedValue = numericValue * exchangeRates.GBP_EUR;
+            }
+            // If originally EUR, keep as is
+        } else {
+            symbol = '£';
+            if (isOriginallyEUR) {
+                // Convert EUR to GBP
+                convertedValue = numericValue * exchangeRates.EUR_GBP;
+            }
+            // If originally GBP, keep as is
+        }
+
+        // Format the converted value
+        return `${symbol}${convertedValue.toLocaleString('en-GB', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        })}`;
+    };
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -44,6 +133,11 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    // Handle currency change
+    const handleCurrencyChange = (event) => {
+        setDisplayCurrency(event.target.value);
     };
 
     // Fetch property description
@@ -192,13 +286,82 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
 
     return (
         <Box sx={{ marginTop: 4 }}>
+            {/* Currency Converter Controls */}
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2,
+                flexWrap: 'wrap',
+                gap: 2
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                        <InputLabel>Display Currency</InputLabel>
+                        <Select
+                            value={displayCurrency}
+                            label="Display Currency"
+                            onChange={handleCurrencyChange}
+                            startAdornment={<CurrencyIcon sx={{ mr: 1, color: 'action.active' }} />}
+                        >
+                            <MenuItem value="GBP">
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <span>£ GBP</span>
+                                </Box>
+                            </MenuItem>
+                            <MenuItem value="EUR">
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <span>€ EUR</span>
+                                </Box>
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <Tooltip title="Refresh exchange rates">
+                        <IconButton
+                            onClick={fetchExchangeRates}
+                            disabled={loadingRates}
+                            size="small"
+                        >
+                            <RefreshIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                    {loadingRates && <CircularProgress size={20} />}
+                </Box>
+
+                {/* Exchange Rate Info */}
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Chip
+                        label={`1 GBP = ${exchangeRates.GBP_EUR?.toFixed(4)} EUR`}
+                        size="small"
+                        variant="outlined"
+                    />
+                    <Chip
+                        label={`1 EUR = ${exchangeRates.EUR_GBP?.toFixed(4)} GBP`}
+                        size="small"
+                        variant="outlined"
+                    />
+                    {ratesLastUpdated && (
+                        <Typography variant="caption" color="text.secondary">
+                            Updated: {ratesLastUpdated.toLocaleTimeString()}
+                        </Typography>
+                    )}
+                </Box>
+            </Box>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Image</TableCell>
                             <TableCell>Address</TableCell>
-                            <TableCell>Price</TableCell>
+                            <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    Price
+                                    <CurrencyIcon fontSize="small" color="action" />
+                                </Box>
+                            </TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -217,7 +380,20 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                         />
                                     </TableCell>
                                     <TableCell>{property.address}</TableCell>
-                                    <TableCell>{property.price}</TableCell>
+                                    <TableCell>
+                                        <Box>
+                                            <Typography variant="body1" fontWeight="bold">
+                                                {convertPrice(property.price)}
+                                            </Typography>
+                                            {/* Show original price if converted */}
+                                            {((property.price.includes('£') && displayCurrency === 'EUR') ||
+                                                (property.price.includes('€') && displayCurrency === 'GBP')) && (
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        Original: {property.price}
+                                                    </Typography>
+                                                )}
+                                        </Box>
+                                    </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
                                             {showAiChat && (
@@ -293,7 +469,14 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                 {currentProperty.address}
                             </Typography>
                             <Typography variant="body2" color="primary">
-                                {currentProperty.price}
+                                {convertPrice(currentProperty.price)}
+                                {/* Show both currencies in chat header */}
+                                {((currentProperty.price.includes('£') && displayCurrency === 'EUR') ||
+                                    (currentProperty.price.includes('€') && displayCurrency === 'GBP')) && (
+                                        <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                                            ({currentProperty.price})
+                                        </Typography>
+                                    )}
                             </Typography>
                         </Box>
                     )}

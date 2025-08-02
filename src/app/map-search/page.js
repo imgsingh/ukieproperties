@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Navbar from "../component/Navbar";
 import { Box, Typography, Paper } from "@mui/material";
 import { styled } from "@mui/system";
+import Footer from "../component/Footer";
 
 // Dynamically import the Map component with SSR disabled
 const Map = dynamic(() => import("../component/Map"), { ssr: false });
@@ -26,6 +27,7 @@ export default function Page() {
                 </Typography>
                 <Map />
             </StyledPaper>
+            <Footer />
         </div>
     );
 }

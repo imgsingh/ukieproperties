@@ -3,6 +3,7 @@
 import styles from "../styles/Home.module.css";
 import Navbar from "../component/Navbar"
 import PropertyAnalyticsDashboard from "../component/PropertyAnalyticsDashboard"
+import Footer from "../component/Footer";
 
 export default function page() {
     return (
@@ -11,6 +12,7 @@ export default function page() {
             <main>
                 <PropertyAnalyticsDashboard />
             </main>
+            <Footer />
         </div>
     );
 }

@@ -6,6 +6,7 @@ import SearchBar from './../component/SearchBar';
 import PropertyTable from './../component/PropertyTable'; // Import the common table component
 import { Typography } from '@mui/material';
 import styles from './page.module.css';
+import Footer from "../component/Footer";
 
 const Page = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -54,7 +55,10 @@ const Page = () => {
 
             {/* Use the common PropertyTable component with AI chat enabled */}
             <PropertyTable properties={searchResults} showAiChat={true} />
-        </div>
+            <div style={{ marginTop: '20px' }}>
+                <Footer />
+            </div>
+        </div >
     );
 };
 

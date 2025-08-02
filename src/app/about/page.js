@@ -2,6 +2,7 @@
 
 import Navbar from "../component/Navbar";
 import styles from "../styles/About.module.css";
+import Footer from "../component/Footer";
 
 export default function About() {
     return (
@@ -42,11 +43,7 @@ export default function About() {
                     </ul>
                 </section>
             </div>
-            <footer className={styles.footer}>
-                <p>
-                    Thank you for choosing UK Ireland Properties. We look forward to helping you find your perfect property.
-                </p>
-            </footer>
+            <Footer />
         </div>
     );
 }
