@@ -17,6 +17,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/navigation";
+import { getFromLocalStorage } from "../utils/Common";
 
 export default function Navbar() {
     const router = useRouter();
@@ -28,8 +29,8 @@ export default function Navbar() {
 
     useEffect(() => {
         // Check if the user is logged in
-        const token = localStorage.getItem("token");
-        const userData = localStorage.getItem("user");
+        const token = getFromLocalStorage('token');
+        const userData = getFromLocalStorage('user');
         if (token && userData) {
             setIsLoggedIn(true);
             setUser(JSON.parse(userData));
@@ -54,8 +55,10 @@ export default function Navbar() {
 
     const handleLogout = () => {
         // Clear user data and token
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        if (typeof window != "undefined") {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+        }
         setIsLoggedIn(false);
         setUser(null);
         handleUserMenuClose();

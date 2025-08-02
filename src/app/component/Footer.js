@@ -1,13 +1,80 @@
 "use client"
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, ArrowUp } from 'lucide-react';
 
 const Footer = () => {
+    const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => {
+                setMessage('');
+                setMessageType('');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
+
+    const handleApiRequest = async (endpoint, action) => {
+        if (!email.trim()) {
+            setMessage('Email is required');
+            setMessageType('error');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setMessage('Invalid email format');
+            setMessageType('error');
+            return;
+        }
+
+        setIsLoading(true);
+        setMessage('');
+
+        try {
+            const response = await fetch(`http://localhost:8080/ukie/api/newsletter/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email.trim() }),
+            });
+
+            if (response.ok) {
+                setMessage(`Successfully ${action}d!`);
+                setMessageType('success');
+                setEmail(''); // Clear email on success
+            } else {
+                const errorData = await response.text();
+                setMessage(errorData || `Failed to ${action}`);
+                setMessageType('error');
+            }
+        } catch (error) {
+            setMessage(`Network error. Please try again.`);
+            setMessageType('error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const currentYear = new Date().getFullYear();
+
+    const handleSubscribe = () => {
+        handleApiRequest('subscribe', 'subscribe');
+    };
 
     return (
         <footer className="bg-gray-900 text-white relative">
@@ -125,12 +192,28 @@ const Footer = () => {
                         </p>
                         <div className="flex space-x-2">
                             <input
+                                id="email"
                                 type="email"
-                                placeholder="Enter your email"
+                                placeholder="Enter your email address"
                                 className="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                                value={email}
+                                disabled={isLoading}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
-                            <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200">
-                                Subscribe
+                            {message && (
+                                <div className={`mb-4 p-3 rounded-lg text-sm ${messageType === 'success'
+                                    ? 'bg-green-100 text-green-700 border border-green-200'
+                                    : 'bg-red-100 text-red-700 border border-red-200'
+                                    }`}>
+                                    {message}
+                                </div>
+                            )}
+                            <button
+                                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+                                onClick={handleSubscribe}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Processing...' : 'Subscribe'}
                             </button>
                         </div>
                     </div>

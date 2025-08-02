@@ -35,6 +35,7 @@ import {
     CurrencyExchange as CurrencyIcon,
     Refresh as RefreshIcon
 } from '@mui/icons-material';
+import { getFromLocalStorage } from '../utils/Common';
 
 const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const [page, setPage] = useState(0);
@@ -144,7 +145,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const fetchPropertyDescription = async (property) => {
         setIsLoadingDescription(true);
         try {
-            const token = localStorage.getItem('token');
+            const token = getFromLocalStorage('token');
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/propertyDescription/${property.id}`, {
                 method: 'GET',
                 credentials: 'include',
@@ -197,7 +198,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     // Send message to AI
     const sendMessageToAI = async (message, propertyContext) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = getFromLocalStorage('token');
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/aiPropertyChat`, {
                 credentials: 'include',
                 method: 'POST',

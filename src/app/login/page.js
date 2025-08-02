@@ -23,6 +23,7 @@ import {
     Lock
 } from "@mui/icons-material";
 import styles from "../styles/Auth.module.css";
+import { setToLocalStorage } from "../utils/Common";
 
 export default function Page() {
     const [formData, setFormData] = useState({
@@ -91,8 +92,8 @@ export default function Page() {
 
             if (response.ok) {
                 // Store JWT token and user info
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                setToLocalStorage('token', data.token);
+                setToLocalStorage('user', JSON.stringify(data.user));
 
                 // Set token in cookies for SSR
                 document.cookie = `token=${data.token}; path=/; max-age=86400; secure; samesite=strict`;

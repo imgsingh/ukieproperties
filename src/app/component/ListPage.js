@@ -14,6 +14,7 @@ import {
     Autocomplete,
 } from '@mui/material';
 import { styled } from '@mui/system';
+import { getFromLocalStorage } from '../utils/Common'
 
 const ListPage = () => {
     const [searchRadius, setSearchRadius] = useState('0.0');
@@ -45,7 +46,8 @@ const ListPage = () => {
     }));
 
     const handleSearch = () => {
-        const token = localStorage.getItem('token');
+        const token = getFromLocalStorage('token');
+
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/searchProperties`, {
             credentials: 'include',
             method: "POST",
@@ -109,7 +111,7 @@ const ListPage = () => {
     }, [properties, sortOption]);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = getFromLocalStorage('token');
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getCounties`, {
             method: "GET",
             credentials: 'include',

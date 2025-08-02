@@ -41,8 +41,8 @@ function AuthCallbackContent() {
                         setStatus('Setting up your session...');
 
                         // Store token and user data
-                        localStorage.setItem('token', token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        setToLocalStorage('token', token);
+                        setToLocalStorage('user', JSON.stringify(data.user));
 
                         // Set cookie for SSR (remove secure flag for localhost)
                         const isLocalhost = window.location.hostname === 'localhost';

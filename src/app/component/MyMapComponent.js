@@ -7,6 +7,7 @@ import { styled } from '@mui/system';
 
 // Import Leaflet CSS to ensure it's loaded
 import 'leaflet/dist/leaflet.css';
+import { getFromLocalStorage } from '../utils/Common'
 
 // Create a custom icon with CDN URLs - this is more explicit for TypeScript
 const customIcon = new L.Icon({
@@ -99,7 +100,7 @@ const MyMapComponent = () => {
             });
 
             function performAPICallForPolygonSearch(e) {
-                const token = localStorage.getItem('token');
+                const token = getFromLocalStorage('token');
 
                 const backendCoordinates = e.layer.editing.latlngs[0][0].map(latLng => [latLng.lng, latLng.lat]);
 
@@ -144,7 +145,7 @@ const MyMapComponent = () => {
                     southWest = { lat: layer._latlng.lat, lng: layer._latlng.lng };
                 }
 
-                const token = localStorage.getItem('token');
+                const token = getFromLocalStorage('token');
 
                 // Example API call using bounding box coordinates
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getPropertiesByLatLong`, {

@@ -44,6 +44,7 @@ import {
     ComposedChart
 } from 'recharts';
 import { TrendingUp, Home, MapPin, Euro, BarChart3, Star, Building, Users, DollarSign } from 'lucide-react';
+import { getFromLocalStorage } from '../utils/Common';
 
 const PropertyAnalyticsDashboard = () => {
     const [properties, setProperties] = useState([]);
@@ -58,7 +59,7 @@ const PropertyAnalyticsDashboard = () => {
         setLoading(true);
         const fetchProperties = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = getFromLocalStorage('token');
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/getProperties`, {
                     method: 'GET',
                     credentials: 'include',

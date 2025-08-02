@@ -7,13 +7,14 @@ import PropertyTable from './../component/PropertyTable'; // Import the common t
 import { Typography } from '@mui/material';
 import styles from './page.module.css';
 import Footer from "../component/Footer";
+import { getFromLocalStorage } from '../utils/Common'
 
 const Page = () => {
     const [searchResults, setSearchResults] = useState([]);
 
     const onSearch = async (query) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = getFromLocalStorage('token');
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/aiSearchProperties`, {
                 method: 'POST',
                 credentials: 'include',

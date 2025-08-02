@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Clock, ExternalLink, Play, Pause, ArrowRightLeft, ArrowRight } from 'lucide-react';
 import ChatBot from '../component/ChatBot'
+import { getFromLocalStorage } from '../utils/Common';
 
 const NewsHomepage = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -17,8 +18,8 @@ const NewsHomepage = () => {
     const [loadingProperties, setLoadingProperties] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
+    const token = getFromLocalStorage('token');
+    const userData = getFromLocalStorage('user');
 
     useEffect(() => {
         const fetchNewsData = async () => {
