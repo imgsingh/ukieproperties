@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react'; // Import Suspense
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CircularProgress, Box, Typography, Alert } from '@mui/material';
+import { setToLocalStorage } from './../../utils/Common'
 
 // Create a separate component that uses useSearchParams
 function AuthCallbackContent() {
