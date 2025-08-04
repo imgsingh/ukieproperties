@@ -1,12 +1,25 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, ArrowUp } from 'lucide-react';
+import { getFromLocalStorage } from '../utils/Common';
 
 const Footer = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // Check if the user is logged in
+        const token = getFromLocalStorage('token');
+        const userData = getFromLocalStorage('user');
+        if (token && userData) {
+            setIsLoggedIn(true);
+            setUser(JSON.parse(userData));
+        }
+    }, []);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -123,10 +136,20 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li><a href="/" className="text-gray-300 hover:text-white transition-colors duration-200">Home</a></li>
                             <li><a href="/aboutus" className="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
-                            <li><a href="/dashboard" className="text-gray-300 hover:text-white transition-colors duration-200">Dashboard</a></li>
-                            <li><a href="/map-search" className="text-gray-300 hover:text-white transition-colors duration-200">Map Search</a></li>
-                            <li><a href="/list-search" className="text-gray-300 hover:text-white transition-colors duration-200">List Search</a></li>
-                            <li><a href="/advance-search" className="text-gray-300 hover:text-white transition-colors duration-200">Advance Search</a></li>
+                            {isLoggedIn &&
+                                <>
+                                    <li><a href="/dashboard" className="text-gray-300 hover:text-white transition-colors duration-200">Dashboard</a></li>
+                                    <li><a href="/map-search" className="text-gray-300 hover:text-white transition-colors duration-200">Map Search</a></li>
+                                    <li><a href="/list-search" className="text-gray-300 hover:text-white transition-colors duration-200">List Search</a></li>
+                                    <li><a href="/advance-search" className="text-gray-300 hover:text-white transition-colors duration-200">Advance Search</a></li>
+                                </>
+                            }{!isLoggedIn &&
+                                <>
+                                    <li><a href="/login" className="text-gray-300 hover:text-white transition-colors duration-200">Login</a></li>
+                                    <li><a href="/signup" className="text-gray-300 hover:text-white transition-colors duration-200">Register</a></li>
+                                </>
+                            }
+
                         </ul>
                     </div>
 
