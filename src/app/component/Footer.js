@@ -122,11 +122,11 @@ const Footer = () => {
                         <h3 className="text-lg font-semibold mb-4 text-blue-400">Quick Links</h3>
                         <ul className="space-y-2">
                             <li><a href="/" className="text-gray-300 hover:text-white transition-colors duration-200">Home</a></li>
-                            <li><a href="/properties" className="text-gray-300 hover:text-white transition-colors duration-200">Properties</a></li>
-                            <li><a href="/buy" className="text-gray-300 hover:text-white transition-colors duration-200">Buy</a></li>
-                            <li><a href="/rent" className="text-gray-300 hover:text-white transition-colors duration-200">Rent</a></li>
-                            <li><a href="/sell" className="text-gray-300 hover:text-white transition-colors duration-200">Sell</a></li>
-                            <li><a href="/news" className="text-gray-300 hover:text-white transition-colors duration-200">Market News</a></li>
+                            <li><a href="/aboutus" className="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                            <li><a href="/dashboard" className="text-gray-300 hover:text-white transition-colors duration-200">Dashboard</a></li>
+                            <li><a href="/map-search" className="text-gray-300 hover:text-white transition-colors duration-200">Map Search</a></li>
+                            <li><a href="/list-search" className="text-gray-300 hover:text-white transition-colors duration-200">List Search</a></li>
+                            <li><a href="/advance-search" className="text-gray-300 hover:text-white transition-colors duration-200">Advance Search</a></li>
                         </ul>
                     </div>
 
@@ -150,23 +150,21 @@ const Footer = () => {
                             <div className="flex items-start space-x-3">
                                 <MapPin className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                                 <div className="text-gray-300 text-sm">
-                                    <p>123 Property Street</p>
-                                    <p>Dublin, D02 XY12</p>
-                                    <p>Ireland</p>
+                                    <p>Maynooth, Ireland</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center space-x-3">
                                 <Phone className="w-5 h-5 text-blue-400 flex-shrink-0" />
                                 <a href="tel:+353123456789" className="text-gray-300 hover:text-white transition-colors duration-200 text-sm">
-                                    +353 1 234 5678
+                                    +353 89 42 87326
                                 </a>
                             </div>
 
                             <div className="flex items-center space-x-3">
                                 <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
                                 <a href="mailto:info@ukieproperties.com" className="text-gray-300 hover:text-white transition-colors duration-200 text-sm">
-                                    info@ukieproperties.com
+                                    gursimranbasra7.gs@gmail.com
                                 </a>
                             </div>
                         </div>
