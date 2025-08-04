@@ -47,7 +47,7 @@ const ChatBot = () => {
         }
 
         if (message.includes('viewing') || message.includes('visit') || message.includes('schedule')) {
-            return "I'd be happy to schedule a property viewing for you! Please provide your preferred dates and the property you're interested in. You can also call us at +44 20 1234 5678.";
+            return "I'd be happy to schedule a property viewing for you! Please provide your preferred dates and the property you're interested in. You can also call us at +353 89 428 7326.";
         }
 
         if (message.includes('location') || message.includes('area') || message.includes('where')) {
@@ -59,14 +59,14 @@ const ChatBot = () => {
         }
 
         if (message.includes('contact') || message.includes('phone') || message.includes('email')) {
-            return "You can reach us at:\n📞 +44 20 1234 5678\n📧 info@ukieproperties.co.uk\n📍 123 Property Street, London, UK\nOffice hours: Mon-Fri 9AM-6PM, Sat 10AM-4PM";
+            return "You can reach us at:\n📞 +353 89 428 7326\n📧 gursimranbasra7.gs@gmail.com\n📍 Maynooth, Ireland\nOffice hours: Mon-Fri 9AM-6PM, Sat 10AM-4PM";
         }
 
         if (message.includes('thank')) {
             return "You're very welcome! Is there anything else I can help you with regarding our properties or services?";
         }
 
-        return "Thanks for your message! For detailed information about specific properties or to speak with one of our property experts, please call +44 20 1234 5678 or email info@ukieproperties.co.uk. Is there anything else I can help you with?";
+        return "Thanks for your message! For detailed information about specific properties or to speak with one of our property experts, please call +353 89 428 7326 or email gursimranbasra7.gs@gmail.com. Is there anything else I can help you with?";
     };
 
     const handleSendMessage = async () => {

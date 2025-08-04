@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Clock, ExternalLink, Play, Pause, ArrowRightLeft, ArrowRight } from 'lucide-react';
 import ChatBot from '../component/ChatBot'
 import { getFromLocalStorage } from '../utils/Common';
@@ -21,16 +21,36 @@ const NewsHomepage = () => {
     const token = getFromLocalStorage('token');
     const userData = getFromLocalStorage('user');
 
+    // Use useCallback to memoize the nextSlide function
+    const nextSlide = useCallback(() => {
+        setCurrentSlide((prev) => (prev + 1) % newsData.length);
+    }, [newsData.length]);
+
+    const prevSlide = useCallback(() => {
+        setCurrentSlide((prev) => (prev - 1 + newsData.length) % newsData.length);
+    }, [newsData.length]);
+
+    const goToSlide = useCallback((index) => {
+        setCurrentSlide(index);
+    }, []);
+
+    // Fixed autoplay useEffect - removed currentSlide from dependencies
+    useEffect(() => {
+        if (isAutoPlaying && newsData.length > 1) {
+            const interval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+            return () => clearInterval(interval);
+        }
+    }, [isAutoPlaying, newsData.length, nextSlide]);
+
     useEffect(() => {
         const fetchNewsData = async () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/news`, {
                     method: 'GET',
-                    //credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        //'Accept': '*/*',
-                        //'Authorization': 'Bearer your-token',
                     },
                 });
                 if (!response.ok) {
@@ -65,14 +85,10 @@ const NewsHomepage = () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/exchange-rates`, {
                     method: 'GET',
-                    //credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        //'Accept': '*/*',
-                        //'Authorization': 'Bearer your-token',
                     },
                 });
-
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,25 +114,6 @@ const NewsHomepage = () => {
             setIsLoggedIn(false);
         }
     }, [token]);
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % newsData.length);
-    };
-
-    useEffect(() => {
-        if (isAutoPlaying) {
-            const interval = setInterval(nextSlide, 5000);
-            return () => clearInterval(interval);
-        }
-    }, [isAutoPlaying, currentSlide]);
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + newsData.length) % newsData.length);
-    };
-
-    const goToSlide = (index) => {
-        setCurrentSlide(index);
-    };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -181,9 +178,32 @@ const NewsHomepage = () => {
         setEurAmount('');
     };
 
+    // Handle manual navigation - temporarily pause autoplay
+    const handleManualNavigation = (navigationFn) => {
+        setIsAutoPlaying(false);
+        navigationFn();
+        // Resume autoplay after 10 seconds
+        setTimeout(() => {
+            setIsAutoPlaying(true);
+        }, 10000);
+    };
+
+    const truncateDescription = (description, maxLength = 200) => {
+        if (!description) return '';
+        if (description.length <= maxLength) return description;
+        return description.substring(0, maxLength).trim() + '...';
+    };
+
     if (loading) {
         return <div className="flex justify-center items-center min-h-screen">
             <div className="text-lg text-gray-600">Loading news...</div>
+        </div>;
+    }
+
+    // Don't render carousel if no news data
+    if (!newsData || newsData.length === 0) {
+        return <div className="flex justify-center items-center min-h-screen">
+            <div className="text-lg text-gray-600">No news articles available</div>
         </div>;
     }
 
@@ -220,7 +240,7 @@ const NewsHomepage = () => {
                                                 {article.title}
                                             </h2>
                                             <p className="text-white/90 text-lg mb-6 leading-relaxed max-w-2xl">
-                                                {article.description}
+                                                {truncateDescription(article.description)}
                                             </p>
                                             <div className="flex items-center gap-4">
                                                 <a
@@ -243,13 +263,13 @@ const NewsHomepage = () => {
                         </div>
 
                         <button
-                            onClick={prevSlide}
+                            onClick={() => handleManualNavigation(prevSlide)}
                             className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 hover:bg-white/30 backdrop-blur-sm p-3 rounded-full transition-all duration-200"
                         >
                             <ChevronLeft className="w-6 h-6 text-white" />
                         </button>
                         <button
-                            onClick={nextSlide}
+                            onClick={() => handleManualNavigation(nextSlide)}
                             className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 bg-white/20 hover:bg-white/30 backdrop-blur-sm p-3 rounded-full transition-all duration-200"
                         >
                             <ChevronRight className="w-6 h-6 text-white" />
@@ -271,7 +291,7 @@ const NewsHomepage = () => {
                         {newsData.map((_, index) => (
                             <button
                                 key={index}
-                                onClick={() => goToSlide(index)}
+                                onClick={() => handleManualNavigation(() => goToSlide(index))}
                                 className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide
                                     ? 'bg-blue-600 w-8'
                                     : 'bg-gray-300 hover:bg-gray-400'
@@ -280,48 +300,6 @@ const NewsHomepage = () => {
                         ))}
                     </div>
                 </div>
-
-                {/* <PropertyAnalyticsDashboard /> */}
-
-                {/* Secondary News Grid
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                    {newsData.slice(0, 6).map((article, index) => (
-                        <div key={`grid-${article.id}`} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
-                            <img
-                                src={article.image_url}
-                                alt={article.title}
-                                className="w-full h-48 object-cover"
-                            />
-                            <div className="p-6">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className={`px-2 py-1 rounded text-xs font-semibold text-white ${getCategoryColor(article.category)}`}>
-                                        {article.category?.[0]?.toUpperCase() || 'NEWS'}
-                                    </span>
-                                    <span className="text-gray-500 text-xs">
-                                        {formatDate(article.pubDate)}
-                                    </span>
-                                </div>
-                                <h3 className="font-bold text-gray-900 mb-2 leading-tight line-clamp-2">
-                                    {article.title}
-                                </h3>
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                                    {article.description}
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-500">{article.source_name}</span>
-                                    <a
-                                        href={article.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                                    >
-                                        Read more →
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div> */}
 
                 {/* Recent Properties Section */}
                 {!isLoggedIn && <div className="mb-12">
