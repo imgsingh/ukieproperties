@@ -40,30 +40,44 @@
 }
 
 .logotext {
+    display: flex;
     flex-direction: column;
     gap: 2px;
 }
 
+/* Updated logo font styling to match the image */
 .companyname {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-family: var(--font-inter);
+    font-size: 1.6rem;
+    font-weight: 600;
     line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .ukpart {
-    color: #ff6b6b;
+    color: #ffffff;
+    text-transform: lowercase;
 }
 
 .irelandpart {
     color: #4ecdc4;
+    text-transform: lowercase;
+    margin-left: 4px;
 }
 
 .tagline {
     margin: 0;
-    font-size: 0.8rem;
+    font-family: var(--font-inter);
+    font-size: 0.7rem;
+    font-weight: 400;
     color: #cccccc;
     line-height: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 /* Navigation Styles */
@@ -109,11 +123,11 @@
     }
 
     .companyname {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .tagline {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     .horizontallogo {
@@ -123,7 +137,7 @@
 
 @media (max-width: 480px) {
     .companyname {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
     .tagline {

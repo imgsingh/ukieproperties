@@ -6,7 +6,7 @@ const ChatBot = () => {
     const [messages, setMessages] = useState([
         {
             id: '1',
-            text: "Hello! Welcome to Ukie Properties. I'm here to help you with any questions about our properties, services, or general inquiries. How can I assist you today?",
+            text: "Hello! Welcome to home assist. I'm here to help you with any questions about our properties, services, or general inquiries. How can I assist you today?",
             isUser: false,
             timestamp: new Date()
         }
@@ -35,7 +35,7 @@ const ChatBot = () => {
         const message = userMessage.toLowerCase();
 
         if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-            return "Hello! Thanks for reaching out to Ukie Properties. How can I help you find your perfect property today?";
+            return "Hello! Thanks for reaching out to home assist. How can I help you find your perfect property today?";
         }
 
         if (message.includes('price') || message.includes('cost') || message.includes('budget')) {
@@ -134,7 +134,7 @@ const ChatBot = () => {
                                 <Home size={16} />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-sm">Ukie Properties</h3>
+                                <h3 className="font-semibold text-sm">home assist</h3>
                                 <p className="text-xs opacity-90">Online now</p>
                             </div>
                         </div>

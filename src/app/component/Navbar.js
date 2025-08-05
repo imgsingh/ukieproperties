@@ -310,8 +310,8 @@ export default function Navbar() {
                         <div className={styles.logoicon}></div>
                         <div className={styles.logotext}>
                             <h1 className={styles.companyname}>
-                                <span className={styles.ukpart}>UK</span>
-                                <span className={styles.irelandpart}>Ireland</span> Properties
+                                <span className={styles.ukpart}>Home</span>
+                                <span className={styles.irelandpart}>Assist</span>
                             </h1>
                             <p className={styles.tagline}>Your Bridge to Property Success</p>
                         </div>

@@ -106,7 +106,7 @@ const Footer = () => {
                     {/* Company Info */}
                     <div className="space-y-4">
                         <div>
-                            <h2 className="text-2xl font-bold text-blue-400 mb-2">UKIreland Properties</h2>
+                            <h2 className="text-2xl font-bold text-blue-400 mb-2">home assist</h2>
                             <p className="text-gray-300 text-sm leading-relaxed">
                                 Your trusted partner in finding the perfect property in the UK and Ireland.
                                 We provide comprehensive property solutions with expert guidance every step of the way.
@@ -186,7 +186,7 @@ const Footer = () => {
 
                             <div className="flex items-center space-x-3">
                                 <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                                <a href="mailto:info@ukieproperties.com" className="text-gray-300 hover:text-white transition-colors duration-200 text-sm">
+                                <a href="mailto:gursimranbasra7.gs@gmail.com" className="text-gray-300 hover:text-white transition-colors duration-200 text-sm">
                                     gursimranbasra7.gs@gmail.com
                                 </a>
                             </div>
@@ -244,7 +244,7 @@ const Footer = () => {
                 <div className="border-t border-gray-800 mt-8 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <div className="text-gray-400 text-sm">
-                            © {currentYear} UKIreland Properties. All rights reserved.
+                            © {currentYear} home assist. All rights reserved.
                         </div>
 
                         <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
@@ -267,7 +267,7 @@ const Footer = () => {
                 {/* Additional Info */}
                 <div className="mt-4 pt-4 border-t border-gray-800">
                     <div className="text-center text-xs text-gray-500">
-                        <p>UKIreland Properties is regulated by the Property Services Regulatory Authority (PSRA)</p>
+                        <p>home assist is regulated by the Property Services Regulatory Authority (PSRA)</p>
                         <p className="mt-1">License No: 12345 | VAT No: IE1234567X</p>
                     </div>
                 </div>
