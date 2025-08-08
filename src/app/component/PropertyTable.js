@@ -124,7 +124,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const handleLikeProperty = async (property) => {
         const propertyId = property.id;
         const isCurrentlyLiked = likedProperties.has(propertyId);
-        
+
         // Add to loading state
         setLikingInProgress(prev => new Set([...prev, propertyId]));
 
@@ -194,14 +194,14 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
             symbol = '€';
             if (isOriginallyGBP) {
                 // Convert GBP to EUR
-                convertedValue = numericValue * exchangeRates.GBP_EUR;
+                convertedValue = numericValue * exchangeRates.EUR_GBP;
             }
             // If originally EUR, keep as is
         } else {
             symbol = '£';
             if (isOriginallyEUR) {
                 // Convert EUR to GBP
-                convertedValue = numericValue * exchangeRates.EUR_GBP;
+                convertedValue = numericValue * exchangeRates.GBP_EUR;
             }
             // If originally GBP, keep as is
         }
@@ -420,12 +420,12 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                 {/* Exchange Rate Info */}
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
                     <Chip
-                        label={`1 GBP = ${exchangeRates.GBP_EUR?.toFixed(4)} EUR`}
+                        label={`1 GBP = ${exchangeRates.EUR_GBP?.toFixed(4)} EUR`}
                         size="small"
                         variant="outlined"
                     />
                     <Chip
-                        label={`1 EUR = ${exchangeRates.EUR_GBP?.toFixed(4)} GBP`}
+                        label={`1 EUR = ${exchangeRates.GBP_EUR?.toFixed(4)} GBP`}
                         size="small"
                         variant="outlined"
                     />
@@ -479,70 +479,70 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                                         Original: {property.price}
                                                     </Typography>
                                                 )}
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
-                                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                                            <IconButton
-                                                onClick={() => handleLikeProperty(property)}
-                                                disabled={likingInProgress.has(property.id)}
-                                                sx={{
-                                                    color: likedProperties.has(property.id) ? '#e91e63' : '#ccc',
-                                                    '&:hover': {
-                                                        color: '#e91e63',
-                                                    }
-                                                }}
-                                            >
-                                                {likingInProgress.has(property.id) ? (
-                                                    <CircularProgress size={20} />
-                                                ) : likedProperties.has(property.id) ? (
-                                                    <FavoriteIcon />
-                                                ) : (
-                                                    <FavoriteBorderIcon />
-                                                )}
-                                            </IconButton>
-                                            <Button
-                                                variant="contained"
-                                                onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}
-                                                size="small"
-                                            >
-                                                View Details
-                                            </Button>
                                         </Box>
-                                        {showAiChat && (
-                                            <Button
-                                                variant="outlined"
-                                                startIcon={<BotIcon />}
-                                                onClick={() => handleAiChatClick(property)}
-                                                size="small"
-                                                sx={{
-                                                    minWidth: 'fit-content',
-                                                    backgroundColor: '#f0f8ff',
-                                                    '&:hover': {
-                                                        backgroundColor: '#e1f0ff',
-                                                    }
-                                                }}
-                                            >
-                                                Talk with AI
-                                            </Button>
-                                        )}
-                                    </Box>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-        <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={properties.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                                                <IconButton
+                                                    onClick={() => handleLikeProperty(property)}
+                                                    disabled={likingInProgress.has(property.id)}
+                                                    sx={{
+                                                        color: likedProperties.has(property.id) ? '#e91e63' : '#ccc',
+                                                        '&:hover': {
+                                                            color: '#e91e63',
+                                                        }
+                                                    }}
+                                                >
+                                                    {likingInProgress.has(property.id) ? (
+                                                        <CircularProgress size={20} />
+                                                    ) : likedProperties.has(property.id) ? (
+                                                        <FavoriteIcon />
+                                                    ) : (
+                                                        <FavoriteBorderIcon />
+                                                    )}
+                                                </IconButton>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}
+                                                    size="small"
+                                                >
+                                                    View Details
+                                                </Button>
+                                            </Box>
+                                            {showAiChat && (
+                                                <Button
+                                                    variant="outlined"
+                                                    startIcon={<BotIcon />}
+                                                    onClick={() => handleAiChatClick(property)}
+                                                    size="small"
+                                                    sx={{
+                                                        minWidth: 'fit-content',
+                                                        backgroundColor: '#f0f8ff',
+                                                        '&:hover': {
+                                                            backgroundColor: '#e1f0ff',
+                                                        }
+                                                    }}
+                                                >
+                                                    Talk with AI
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={properties.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
 
             {/* AI Chat Dialog */}
             {showAiChat && (
