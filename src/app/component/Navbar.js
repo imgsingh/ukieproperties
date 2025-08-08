@@ -71,6 +71,11 @@ export default function Navbar() {
         handleUserMenuClose();
     };
 
+    const handleLikedProperties = () => {
+        router.push('/liked-properties');
+        handleUserMenuClose();
+    };
+
     const toggleDrawer = (open) => () => {
         setIsDrawerOpen(open);
     };
@@ -127,6 +132,7 @@ export default function Navbar() {
                 onClose: handleUserMenuClose,
                 onLogout: handleLogout,
                 onProfile: handleProfile,
+                onLikedProperties: handleLikedProperties,
             });
         } else {
             navItems.push({
@@ -215,6 +221,7 @@ export default function Navbar() {
                             open={Boolean(item.anchorEl)}
                             onClose={item.onClose}
                         >
+                            <MenuItem onClick={item.onLikedProperties}>Liked Properties</MenuItem>
                             <MenuItem onClick={item.onProfile}>Profile</MenuItem>
                             <MenuItem onClick={item.onLogout}>Logout</MenuItem>
                         </Menu>
@@ -282,6 +289,12 @@ export default function Navbar() {
                 href: item.href,
                 label: item.label,
             })));
+
+            mobileItems.push({
+                type: "link",
+                href: "/liked-properties",
+                label: "Liked Properties"
+            });
 
             mobileItems.push({
                 type: "button",

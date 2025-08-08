@@ -33,7 +33,9 @@ import {
     Send as SendIcon,
     SmartToy as BotIcon,
     CurrencyExchange as CurrencyIcon,
-    Refresh as RefreshIcon
+    Refresh as RefreshIcon,
+    Favorite as FavoriteIcon,
+    FavoriteBorder as FavoriteBorderIcon
 } from '@mui/icons-material';
 import { getFromLocalStorage } from '../utils/Common';
 
@@ -55,6 +57,10 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const [displayCurrency, setDisplayCurrency] = useState('GBP'); // GBP or EUR
     const [loadingRates, setLoadingRates] = useState(false);
     const [ratesLastUpdated, setRatesLastUpdated] = useState(null);
+
+    // Liked properties state
+    const [likedProperties, setLikedProperties] = useState(new Set());
+    const [likingInProgress, setLikingInProgress] = useState(new Set());
 
     // Fetch exchange rates
     const fetchExchangeRates = async () => {
@@ -83,10 +89,90 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
         }
     };
 
-    // Load exchange rates on component mount
+    // Load exchange rates and liked properties on component mount
     useEffect(() => {
         fetchExchangeRates();
+        fetchLikedProperties();
     }, []);
+
+    // Fetch user's liked properties
+    const fetchLikedProperties = async () => {
+        try {
+            const token = getFromLocalStorage('token');
+            if (!token) return;
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/liked-properties`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const likedIds = new Set(data.likedProperties?.map(p => p.id) || []);
+                setLikedProperties(likedIds);
+            }
+        } catch (error) {
+            console.error('Error fetching liked properties:', error);
+        }
+    };
+
+    // Handle like/unlike property
+    const handleLikeProperty = async (property) => {
+        const propertyId = property.id;
+        const isCurrentlyLiked = likedProperties.has(propertyId);
+        
+        // Add to loading state
+        setLikingInProgress(prev => new Set([...prev, propertyId]));
+
+        try {
+            const token = getFromLocalStorage('token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const endpoint = isCurrentlyLiked ? 'unlike-property' : 'like-property';
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/${endpoint}`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ propertyId, propertyData: property }),
+            });
+
+            if (response.ok) {
+                // Update local state
+                setLikedProperties(prev => {
+                    const newSet = new Set(prev);
+                    if (isCurrentlyLiked) {
+                        newSet.delete(propertyId);
+                    } else {
+                        newSet.add(propertyId);
+                    }
+                    return newSet;
+                });
+            } else if (response.status === 401) {
+                window.location.href = '/login';
+            } else {
+                console.error('Failed to update like status');
+            }
+        } catch (error) {
+            console.error('Error updating like status:', error);
+        } finally {
+            // Remove from loading state
+            setLikingInProgress(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(propertyId);
+                return newSet;
+            });
+        }
+    };
 
     // Convert price based on selected currency
     const convertPrice = (priceString) => {
@@ -393,48 +479,70 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                                         Original: {property.price}
                                                     </Typography>
                                                 )}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
-                                            {showAiChat && (
-                                                <Button
-                                                    variant="outlined"
-                                                    startIcon={<BotIcon />}
-                                                    onClick={() => handleAiChatClick(property)}
-                                                    sx={{
-                                                        minWidth: 'fit-content',
-                                                        backgroundColor: '#f0f8ff',
-                                                        '&:hover': {
-                                                            backgroundColor: '#e1f0ff',
-                                                        }
-                                                    }}
-                                                >
-                                                    Talk with AI
-                                                </Button>
-                                            )}
+                                    </Box>
+                                </TableCell>
+                                <TableCell>
+                                    <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                                            <IconButton
+                                                onClick={() => handleLikeProperty(property)}
+                                                disabled={likingInProgress.has(property.id)}
+                                                sx={{
+                                                    color: likedProperties.has(property.id) ? '#e91e63' : '#ccc',
+                                                    '&:hover': {
+                                                        color: '#e91e63',
+                                                    }
+                                                }}
+                                            >
+                                                {likingInProgress.has(property.id) ? (
+                                                    <CircularProgress size={20} />
+                                                ) : likedProperties.has(property.id) ? (
+                                                    <FavoriteIcon />
+                                                ) : (
+                                                    <FavoriteBorderIcon />
+                                                )}
+                                            </IconButton>
                                             <Button
                                                 variant="contained"
                                                 onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}
+                                                size="small"
                                             >
                                                 View Details
                                             </Button>
                                         </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={properties.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+                                        {showAiChat && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<BotIcon />}
+                                                onClick={() => handleAiChatClick(property)}
+                                                size="small"
+                                                sx={{
+                                                    minWidth: 'fit-content',
+                                                    backgroundColor: '#f0f8ff',
+                                                    '&:hover': {
+                                                        backgroundColor: '#e1f0ff',
+                                                    }
+                                                }}
+                                            >
+                                                Talk with AI
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+        <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={properties.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+        />
 
             {/* AI Chat Dialog */}
             {showAiChat && (
