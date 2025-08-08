@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../styles/Navbar.module.css";
 import {
     Drawer,
@@ -61,8 +62,13 @@ export default function Navbar() {
         }
         setIsLoggedIn(false);
         setUser(null);
+        router.push('/');
         handleUserMenuClose();
-        router.push("/");
+    };
+
+    const handleProfile = () => {
+        router.push('/users');
+        handleUserMenuClose();
     };
 
     const toggleDrawer = (open) => () => {
@@ -120,6 +126,7 @@ export default function Navbar() {
                 anchorEl: userMenuAnchorEl,
                 onClose: handleUserMenuClose,
                 onLogout: handleLogout,
+                onProfile: handleProfile,
             });
         } else {
             navItems.push({
@@ -208,6 +215,7 @@ export default function Navbar() {
                             open={Boolean(item.anchorEl)}
                             onClose={item.onClose}
                         >
+                            <MenuItem onClick={item.onProfile}>Profile</MenuItem>
                             <MenuItem onClick={item.onLogout}>Logout</MenuItem>
                         </Menu>
                     </li>
@@ -307,7 +315,15 @@ export default function Navbar() {
                 {/* Logo Section */}
                 <Link href="/" className={styles.logoLink}>
                     <div className={styles.horizontallogo}>
-                        <div className={styles.logoicon}></div>
+                        <div className={styles.logoicon}>
+                            <Image
+                                src="/logo.png"
+                                alt="HomeAssist Logo"
+                                width={40}
+                                height={40}
+                                className={styles.logoImage}
+                            />
+                        </div>
                         <div className={styles.logotext}>
                             <h1 className={styles.companyname}>
                                 <span className={styles.ukpart}>Home</span>

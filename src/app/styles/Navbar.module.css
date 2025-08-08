@@ -39,6 +39,11 @@
     gap: 4px;
 }
 
+.logoImage {
+    border-radius: 4px;
+    object-fit: contain;
+}
+
 .logotext {
     display: flex;
     flex-direction: column;
@@ -59,12 +64,12 @@
 }
 
 .ukpart {
-    color: #ffffff;
+    color: #3C6C3D;
     text-transform: lowercase;
 }
 
 .irelandpart {
-    color: #4ecdc4;
+    color: #3C6C3D;
     text-transform: lowercase;
     margin-left: 4px;
 }
