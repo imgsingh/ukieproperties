@@ -35,7 +35,8 @@ import {
     CurrencyExchange as CurrencyIcon,
     Refresh as RefreshIcon,
     Favorite as FavoriteIcon,
-    FavoriteBorder as FavoriteBorderIcon
+    FavoriteBorder as FavoriteBorderIcon,
+    Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import { getFromLocalStorage } from '../utils/Common';
 
@@ -441,15 +442,15 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Address</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ width: '300px' }}>Image</TableCell>
+                            <TableCell sx={{ width: '300px', minWidth: '250px' }}>Address</TableCell>
+                            <TableCell sx={{ width: '150px' }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     Price
                                     <CurrencyIcon fontSize="small" color="action" />
                                 </Box>
                             </TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell sx={{ width: '200px', minWidth: '180px' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -457,17 +458,41 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((property, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>
+                                    <TableCell sx={{ padding: 1 }}>
                                         <img
                                             src={property.mainPhoto}
                                             alt="Property"
-                                            width="300"
-                                            height="300"
-                                            style={{ borderRadius: '8px', objectFit: 'cover' }}
+                                            style={{
+                                                width: '300px',
+                                                height: '200px',
+                                                borderRadius: '8px',
+                                                objectFit: 'cover',
+                                                display: 'block'
+                                            }}
                                         />
                                     </TableCell>
-                                    <TableCell>{property.address}</TableCell>
-                                    <TableCell>
+                                    <TableCell sx={{
+                                        maxWidth: '300px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                        padding: '8px 16px'
+                                    }}>
+                                        <Tooltip title={property.address} placement="top">
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                    cursor: 'help'
+                                                }}
+                                            >
+                                                {property.address}
+                                            </Typography>
+                                        </Tooltip>
+                                    </TableCell>
+                                    <TableCell sx={{ padding: '8px 16px' }}>
                                         <Box>
                                             <Typography variant="body1" fontWeight="bold">
                                                 {convertPrice(property.price)}
@@ -481,46 +506,74 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                                 )}
                                         </Box>
                                     </TableCell>
-                                    <TableCell>
-                                        <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
+                                    <TableCell sx={{ padding: '8px 16px' }}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 1.5,
+                                            alignItems: 'stretch',
+                                            minWidth: '160px'
+                                        }}>
+                                            {/* First row: Like button and View Details */}
                                             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                                                <IconButton
-                                                    onClick={() => handleLikeProperty(property)}
-                                                    disabled={likingInProgress.has(property.id)}
-                                                    sx={{
-                                                        color: likedProperties.has(property.id) ? '#e91e63' : '#ccc',
-                                                        '&:hover': {
-                                                            color: '#e91e63',
-                                                        }
-                                                    }}
-                                                >
-                                                    {likingInProgress.has(property.id) ? (
-                                                        <CircularProgress size={20} />
-                                                    ) : likedProperties.has(property.id) ? (
-                                                        <FavoriteIcon />
-                                                    ) : (
-                                                        <FavoriteBorderIcon />
-                                                    )}
-                                                </IconButton>
+                                                <Tooltip title={likedProperties.has(property.id) ? "Remove from favorites" : "Add to favorites"}>
+                                                    <IconButton
+                                                        onClick={() => handleLikeProperty(property)}
+                                                        disabled={likingInProgress.has(property.id)}
+                                                        sx={{
+                                                            color: likedProperties.has(property.id) ? '#e91e63' : '#757575',
+                                                            '&:hover': {
+                                                                color: '#e91e63',
+                                                                backgroundColor: 'rgba(233, 30, 99, 0.04)'
+                                                            },
+                                                            minWidth: 'auto',
+                                                            padding: '6px'
+                                                        }}
+                                                    >
+                                                        {likingInProgress.has(property.id) ? (
+                                                            <CircularProgress size={20} />
+                                                        ) : likedProperties.has(property.id) ? (
+                                                            <FavoriteIcon fontSize="small" />
+                                                        ) : (
+                                                            <FavoriteBorderIcon fontSize="small" />
+                                                        )}
+                                                    </IconButton>
+                                                </Tooltip>
                                                 <Button
                                                     variant="contained"
-                                                    onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}
                                                     size="small"
+                                                    startIcon={<VisibilityIcon fontSize="small" />}
+                                                    onClick={() => { if (typeof window !== 'undefined') { window.open(property.seoUrl, '_blank') } }}
+                                                    sx={{
+                                                        flex: 1,
+                                                        minWidth: 'fit-content',
+                                                        fontSize: '0.75rem',
+                                                        textTransform: 'none',
+                                                        fontWeight: 500
+                                                    }}
                                                 >
                                                     View Details
                                                 </Button>
                                             </Box>
+
+                                            {/* Second row: AI Chat button */}
                                             {showAiChat && (
                                                 <Button
                                                     variant="outlined"
-                                                    startIcon={<BotIcon />}
+                                                    startIcon={<BotIcon fontSize="small" />}
                                                     onClick={() => handleAiChatClick(property)}
                                                     size="small"
                                                     sx={{
-                                                        minWidth: 'fit-content',
+                                                        width: '100%',
                                                         backgroundColor: '#f0f8ff',
+                                                        borderColor: '#1976d2',
+                                                        color: '#1976d2',
+                                                        fontSize: '0.75rem',
+                                                        textTransform: 'none',
+                                                        fontWeight: 500,
                                                         '&:hover': {
-                                                            backgroundColor: '#e1f0ff',
+                                                            backgroundColor: '#e3f2fd',
+                                                            borderColor: '#1976d2',
                                                         }
                                                     }}
                                                 >
