@@ -67,7 +67,7 @@ export default function Navbar() {
     };
 
     const handleProfile = () => {
-        router.push('/users');
+        router.push('/profile');
         handleUserMenuClose();
     };
 
