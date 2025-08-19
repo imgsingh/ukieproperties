@@ -2,7 +2,8 @@
 "use client"
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Search, Plus, Edit, Trash2, Eye, Users, UserCheck, Mail, Calendar, Settings, LogOut, Download, Filter } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Plus, Edit, Trash2, Eye, Users, UserCheck, Mail, Calendar, Settings, LogOut, Download, Filter, Shield, Lock } from 'lucide-react';
 import userService from '../component/userService';
 import Navbar from '../component/Navbar';
 
@@ -22,20 +23,80 @@ const UserManagementPage = () => {
     const [stats, setStats] = useState({});
     const [showUserSettings, setShowUserSettings] = useState(false);
     const [error, setError] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true);
 
-    // Mock current user - replace with actual auth
-    const currentUser = {
-        id: '1',
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@example.com',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
-    };
+    const router = useRouter();
+
+    // Admin email - you can also move this to environment variables
+    const ADMIN_EMAIL = 'gursimranbasra7.gs@gmail.com';
 
     useEffect(() => {
-        fetchUsers();
-        fetchStats();
-    }, [currentPage, searchTerm, sortBy, sortDir, pageSize]);
+        checkAdminAccess();
+    }, []);
+
+    useEffect(() => {
+        if (isAdmin) {
+            fetchUsers();
+            fetchStats();
+        }
+    }, [currentPage, searchTerm, sortBy, sortDir, pageSize, isAdmin]);
+
+    const checkAdminAccess = async () => {
+        try {
+            setAuthLoading(true);
+
+            // Get current user from localStorage, sessionStorage, or API call
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+
+            if (!token) {
+                redirectToLogin();
+                return;
+            }
+
+            // Fetch current user details - replace with your actual auth service
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ukie/api/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get user info');
+            }
+
+            const userData = await response.json();
+            setCurrentUser(userData);
+
+            // Check if user is admin
+            if (userData.email === ADMIN_EMAIL) {
+                setIsAdmin(true);
+            } else {
+                setError('Access denied. Admin privileges required.');
+                setTimeout(() => {
+                    router.push('/dashboard'); // Redirect to dashboard or home page
+                }, 3000);
+            }
+
+        } catch (error) {
+            console.error('Error checking admin access:', error);
+            setError('Authentication failed. Please login again.');
+            setTimeout(() => {
+                redirectToLogin();
+            }, 2000);
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const redirectToLogin = () => {
+        // Clear any stored tokens
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
+        router.push('/login');
+    };
 
     const fetchUsers = async () => {
         try {
@@ -57,7 +118,11 @@ const UserManagementPage = () => {
             setTotalElements(data.totalElements || 0);
         } catch (error) {
             console.error('Error fetching users:', error);
-            setError('Failed to fetch users. Please try again.');
+            if (error.response?.status === 403) {
+                setError('Access denied. Admin privileges required.');
+            } else {
+                setError('Failed to fetch users. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -298,6 +363,56 @@ const UserManagementPage = () => {
         );
     };
 
+    // Loading screen while checking authentication
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Verifying admin access...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Access denied screen
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="max-w-md w-full">
+                    <div className="bg-white shadow-lg rounded-lg p-8 text-center">
+                        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                            <Shield className="h-6 w-6 text-red-600" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+                        <p className="text-gray-600 mb-6">
+                            You don't have permission to access this page. Admin privileges are required.
+                        </p>
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+                                {error}
+                            </div>
+                        )}
+                        <div className="space-y-3">
+                            <button
+                                onClick={() => router.push('/dashboard')}
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+                            >
+                                Go to Dashboard
+                            </button>
+                            <button
+                                onClick={redirectToLogin}
+                                className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200"
+                            >
+                                Sign Out & Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <>
             <div className="min-h-screen bg-gray-50">
@@ -305,6 +420,18 @@ const UserManagementPage = () => {
                 <Navbar />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    {/* Admin Badge */}
+                    <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center">
+                            <Shield className="w-5 h-5 text-blue-600 mr-2" />
+                            <span className="text-blue-800 font-medium">Admin Panel</span>
+                            <span className="ml-2 text-blue-600">- User Management</span>
+                            <span className="ml-auto text-sm text-blue-600">
+                                Logged in as: {currentUser?.email}
+                            </span>
+                        </div>
+                    </div>
+
                     {/* Error Message */}
                     {error && (
                         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
@@ -364,7 +491,7 @@ const UserManagementPage = () => {
                                             placeholder="Search users..."
                                             value={searchTerm}
                                             onChange={handleSearch}
-                                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue500 sm:text-sm"
+                                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -377,12 +504,12 @@ const UserManagementPage = () => {
                                         Export
                                     </button> */}
                                     <button
-                                        disabled={true}
+                                        disabled={selectedUsers.size === 0}
                                         onClick={handleBulkDelete}
-                                        className="inline-flex items-center px-4 py-2 border border-red-300 text-sm rounded-md shadow-sm bg-red-100 text-red-700 hover:bg-red-200"
+                                        className="inline-flex items-center px-4 py-2 border border-red-300 text-sm rounded-md shadow-sm bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Trash2 className="w-4 h-4 mr-2" />
-                                        Delete Selected
+                                        Delete Selected ({selectedUsers.size})
                                     </button>
                                     <button
                                         onClick={() => {
@@ -406,8 +533,9 @@ const UserManagementPage = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             <input
                                                 type="checkbox"
-                                                checked={selectedUsers.size === users.length}
+                                                checked={users.length > 0 && selectedUsers.size === users.length}
                                                 onChange={handleSelectAll}
+                                                disabled={users.length === 0}
                                             />
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('firstName')}>
@@ -431,7 +559,10 @@ const UserManagementPage = () => {
                                     {loading ? (
                                         <tr>
                                             <td colSpan={6} className="text-center px-6 py-4">
-                                                Loading users...
+                                                <div className="flex items-center justify-center">
+                                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-2"></div>
+                                                    Loading users...
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : users.length === 0 ? (
@@ -442,12 +573,13 @@ const UserManagementPage = () => {
                                         </tr>
                                     ) : (
                                         users.map((user) => (
-                                            <tr key={user.id}>
+                                            <tr key={user.id} className={user.email === ADMIN_EMAIL ? 'bg-blue-50' : ''}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <input
                                                         type="checkbox"
                                                         checked={selectedUsers.has(user.id)}
                                                         onChange={() => handleSelectUser(user.id)}
+                                                        disabled={user.email === ADMIN_EMAIL} // Prevent admin from being selected for deletion
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap flex items-center space-x-3">
@@ -456,13 +588,18 @@ const UserManagementPage = () => {
                                                         alt={user.firstName}
                                                         className="w-8 h-8 rounded-full"
                                                     />
-                                                    <span>{user.firstName} {user.lastName}</span>
+                                                    <span className="flex items-center">
+                                                        {user.firstName} {user.lastName}
+                                                        {user.email === ADMIN_EMAIL && (
+                                                            <Shield className="w-4 h-4 text-blue-600 ml-2" title="Admin" />
+                                                        )}
+                                                    </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{getProviderIcon(user.provider)}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{formatDate(user.createdAt)}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
-                                                    {!user.verified && (
+                                                    {!user.emailVerified && (
                                                         <button
                                                             title="Verify Email"
                                                             onClick={() => handleVerifyEmail(user.id)}
@@ -487,13 +624,15 @@ const UserManagementPage = () => {
                                                     >
                                                         <Edit className="w-5 h-5 inline" />
                                                     </button>
-                                                    <button
-                                                        title="Delete"
-                                                        onClick={() => handleDeleteUser(user.id)}
-                                                        className="text-red-600 hover:text-red-800"
-                                                    >
-                                                        <Trash2 className="w-5 h-5 inline" />
-                                                    </button>
+                                                    {user.email !== ADMIN_EMAIL && (
+                                                        <button
+                                                            title="Delete"
+                                                            onClick={() => handleDeleteUser(user.id)}
+                                                            className="text-red-600 hover:text-red-800"
+                                                        >
+                                                            <Trash2 className="w-5 h-5 inline" />
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))
@@ -511,7 +650,7 @@ const UserManagementPage = () => {
                                 <button
                                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
                                     disabled={currentPage === 0}
-                                    className="px-3 py-1 border rounded disabled:opacity-50"
+                                    className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                                 >
                                     Previous
                                 </button>
@@ -519,7 +658,7 @@ const UserManagementPage = () => {
                                 <button
                                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
                                     disabled={currentPage + 1 >= totalPages}
-                                    className="px-3 py-1 border rounded disabled:opacity-50"
+                                    className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                                 >
                                     Next
                                 </button>
