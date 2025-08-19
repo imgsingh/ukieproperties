@@ -1,59 +1,307 @@
+/* styles/About.module.css */
+
 .container {
-    font-family: Arial, sans-serif;
-    margin: 0 auto;
-    color: #333;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 .newclass {
     max-width: 1200px;
-    justify-self: center;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
+/* Hero Section */
 .header {
-    text-align: center;
-    margin-bottom: 40px;
+    padding: 80px 0;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    margin-bottom: 60px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.heroContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    padding: 0 40px;
+}
+
+.heroText {
+    flex: 1;
+}
+
+.heroImage {
+    flex: 1;
+    max-width: 500px;
 }
 
 .title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #1976d2;
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .subtitle {
-    font-size: 1.2rem;
-    color: #555;
-    margin-top: 10px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #cbd5e1;
+    font-weight: 500;
 }
 
+.heroDescription {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.heroImg {
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.heroImg:hover {
+    transform: scale(1.05);
+}
+
+/* Section Styling */
 .section {
-    margin-bottom: 40px;
+    margin-bottom: 80px;
+    background: white;
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.sectionWithImage {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.sectionText {
+    flex: 1;
+}
+
+.sectionImage {
+    flex: 0 0 400px;
 }
 
 .sectionTitle {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #1976d2;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.sectionTitle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 2px;
 }
 
 .sectionContent {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #475569;
+    margin-bottom: 20px;
+}
+
+.sectionImg {
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sectionImg:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Values Section */
+.valuesSection {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 20px;
+    padding: 60px 40px;
+    margin-bottom: 80px;
+    text-align: center;
+}
+
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.valueCard {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.valueCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.valueIcon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.valueCard h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+
+.valueCard p {
+    color: #64748b;
     line-height: 1.6;
-    color: #555;
 }
 
 .valuesList {
-    list-style-type: disc;
-    padding-left: 20px;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
+    list-style: none;
+    padding: 0;
 }
 
-.footer {
+.valuesList li {
+    background: white;
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #3b82f6;
+    font-size: 1.1rem;
+    color: #475569;
+}
+
+/* Property Showcase */
+.showcaseSection {
+    background: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    margin-bottom: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     text-align: center;
+}
+
+.propertyGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
     margin-top: 40px;
-    font-size: 1rem;
-    color: #777;
+}
+
+.propertyCard {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.propertyCard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.propertyImg {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.propertyCard:hover .propertyImg {
+    transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .heroContent {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+        padding: 0 20px;
+    }
+
+    .sectionWithImage {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .sectionImage {
+        flex: none;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .valuesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .propertyGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: 30px 20px;
+    }
+
+    .valuesSection,
+    .showcaseSection {
+        padding: 40px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .sectionTitle {
+        font-size: 2rem;
+    }
+
+    .newclass {
+        padding: 0 10px;
+    }
 }

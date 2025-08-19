@@ -6,6 +6,7 @@ import { User, Mail, Lock, Save, Eye, EyeOff, Camera, Shield } from 'lucide-reac
 import userService from '../component/userService';
 import Navbar from '../component/Navbar';
 import { getFromLocalStorage } from '../utils/Common';
+import Footer from '../component/Footer';
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
@@ -471,6 +472,7 @@ const ProfilePage = () => {
                         </form>
                     </div>
                 </div>
+                <Footer />
             </div>
         </>
     );

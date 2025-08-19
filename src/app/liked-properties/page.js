@@ -26,6 +26,7 @@ import {
 } from '@mui/icons-material';
 import { getFromLocalStorage } from '../utils/Common';
 import Navbar from '../component/Navbar';
+import Footer from '../component/Footer';
 
 const LikedPropertiesPage = () => {
     const [likedProperties, setLikedProperties] = useState([]);
@@ -138,6 +139,7 @@ const LikedPropertiesPage = () => {
                         <CircularProgress size={60} />
                     </Box>
                 </Container>
+                <Footer />
             </>
         );
     }
@@ -163,9 +165,9 @@ const LikedPropertiesPage = () => {
                 )}
 
                 {likedProperties.length === 0 ? (
-                    <Box 
-                        sx={{ 
-                            textAlign: 'center', 
+                    <Box
+                        sx={{
+                            textAlign: 'center',
                             py: 8,
                             backgroundColor: '#f9f9f9',
                             borderRadius: 2,
@@ -179,15 +181,15 @@ const LikedPropertiesPage = () => {
                         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
                             Start exploring properties and click the heart icon to add them to your favorites.
                         </Typography>
-                        <Button 
-                            variant="contained" 
+                        <Button
+                            variant="contained"
                             href="/map-search"
                             sx={{ mr: 2 }}
                         >
                             Search Properties
                         </Button>
-                        <Button 
-                            variant="outlined" 
+                        <Button
+                            variant="outlined"
                             href="/list-search"
                         >
                             Browse List
@@ -196,7 +198,7 @@ const LikedPropertiesPage = () => {
                 ) : (
                     <>
                         <Box sx={{ mb: 3 }}>
-                            <Chip 
+                            <Chip
                                 label={`${likedProperties.length} ${likedProperties.length === 1 ? 'Property' : 'Properties'}`}
                                 color="primary"
                                 variant="outlined"
@@ -206,8 +208,8 @@ const LikedPropertiesPage = () => {
                         <Grid container spacing={3}>
                             {likedProperties.map((property) => (
                                 <Grid item xs={12} sm={6} md={4} key={property.id}>
-                                    <Card 
-                                        sx={{ 
+                                    <Card
+                                        sx={{
                                             height: '100%',
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -233,7 +235,7 @@ const LikedPropertiesPage = () => {
                                                 {formatPrice(property.price)}
                                             </Typography>
                                             {property.propertyType && (
-                                                <Chip 
+                                                <Chip
                                                     label={property.propertyType}
                                                     size="small"
                                                     variant="outlined"
@@ -302,7 +304,7 @@ const LikedPropertiesPage = () => {
                         <Button onClick={closeConfirmDialog}>
                             Cancel
                         </Button>
-                        <Button 
+                        <Button
                             onClick={() => handleRemoveProperty(confirmDialog.property)}
                             color="error"
                             variant="contained"
@@ -317,6 +319,7 @@ const LikedPropertiesPage = () => {
                     </DialogActions>
                 </Dialog>
             </Container>
+            <Footer />
         </>
     );
 };
