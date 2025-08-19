@@ -1,6 +1,5 @@
-// pages/reset-password.js
 "use client"
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -25,7 +24,8 @@ import {
 } from "@mui/icons-material";
 import styles from "../styles/Auth.module.css";
 
-export default function ResetPassword() {
+// Create a wrapper component that handles the search params
+function ResetPasswordContent() {
     const [formData, setFormData] = useState({
         newPassword: "",
         confirmPassword: ""
@@ -360,5 +360,32 @@ export default function ResetPassword() {
                 </Box>
             </Paper>
         </Container>
+    );
+}
+
+// Loading component for Suspense fallback
+function ResetPasswordLoading() {
+    return (
+        <Container maxWidth="xl" className={styles.authContainer}>
+            <Paper elevation={3} className={styles.authPaper}>
+                <Box className={styles.authHeader}>
+                    <Typography variant="h4" component="h1" className={styles.authTitle}>
+                        Loading...
+                    </Typography>
+                </Box>
+                <Box className={styles.authForm} sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                    <CircularProgress />
+                </Box>
+            </Paper>
+        </Container>
+    );
+}
+
+// Main export with Suspense boundary
+export default function ResetPassword() {
+    return (
+        <Suspense fallback={<ResetPasswordLoading />}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }
