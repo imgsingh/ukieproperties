@@ -158,7 +158,12 @@ const ListPage = () => {
                             List Based Search
                         </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                    <Box sx={{
+                        display: { xs: 'block', sm: 'flex' }, // block on mobile, flex on small screens and up
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: 2
+                    }}>
                         <FormControl sx={{ minWidth: 300, marginRight: 2 }}>
                             <Box sx={{ marginRight: 2 }}>
                                 <Typography variant="subtitle1" sx={{ mb: 1 }}>
