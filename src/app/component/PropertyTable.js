@@ -462,6 +462,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                                         <img
                                             src={property.mainPhoto}
                                             alt="Property"
+                                            className="max-w-none md:max-w-full"
                                             style={{
                                                 width: '300px',
                                                 height: '200px',

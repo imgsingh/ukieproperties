@@ -211,12 +211,12 @@ const Footer = () => {
                         <p className="text-gray-300 text-sm mb-4">
                             Subscribe to our newsletter for the latest property news and market insights.
                         </p>
-                        <div className="flex space-x-2">
+                        <div className="md:flex md:space-x-2">
                             <input
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email address"
-                                className="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400"
+                                className="flex-1 px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400 mb-2"
                                 value={email}
                                 disabled={isLoading}
                                 onChange={(e) => setEmail(e.target.value)}

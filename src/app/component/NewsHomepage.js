@@ -239,7 +239,7 @@ const NewsHomepage = () => {
                                             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                                                 {article.title}
                                             </h2>
-                                            <p className="text-white/90 text-lg mb-6 leading-relaxed max-w-2xl">
+                                            <p className="hidden md:block text-white/90 text-lg mb-6 leading-relaxed max-w-2xl">
                                                 {truncateDescription(article.description)}
                                             </p>
                                             <div className="flex items-center gap-4">
