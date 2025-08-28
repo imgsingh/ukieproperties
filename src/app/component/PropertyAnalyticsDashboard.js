@@ -54,7 +54,132 @@ const PropertyAnalyticsDashboard = () => {
     const [selectedSource, setSelectedSource] = useState('All');
     const [activeTab, setActiveTab] = useState(0);
 
-    // Sample data based on your actual structure
+    const REGION_BOUNDARIES_ARRAY = [
+        // Irish Counties
+        { name: 'Dublin', country: 'Ireland', bounds: { north: 53.55, south: 53.15, east: -6.05, west: -6.50 } },
+        { name: 'Cork', country: 'Ireland', bounds: { north: 52.30, south: 51.35, east: -7.85, west: -9.85 } },
+        { name: 'Galway', country: 'Ireland', bounds: { north: 53.75, south: 52.95, east: -8.15, west: -10.35 } },
+        { name: 'Limerick', country: 'Ireland', bounds: { north: 52.80, south: 52.35, east: -8.35, west: -9.15 } },
+        { name: 'Waterford', country: 'Ireland', bounds: { north: 52.45, south: 52.05, east: -6.95, west: -8.05 } },
+        { name: 'Kilkenny', country: 'Ireland', bounds: { north: 52.85, south: 52.25, east: -6.95, west: -7.65 } },
+        { name: 'Kerry', country: 'Ireland', bounds: { north: 52.45, south: 51.75, east: -9.25, west: -10.65 } },
+        { name: 'Mayo', country: 'Ireland', bounds: { north: 54.15, south: 53.45, east: -8.95, west: -10.15 } },
+        { name: 'Donegal', country: 'Ireland', bounds: { north: 55.35, south: 54.45, east: -7.25, west: -8.55 } },
+        { name: 'Wicklow', country: 'Ireland', bounds: { north: 53.25, south: 52.85, east: -5.95, west: -6.75 } },
+        { name: 'Wexford', country: 'Ireland', bounds: { north: 52.75, south: 52.15, east: -6.15, west: -6.95 } },
+        { name: 'Tipperary', country: 'Ireland', bounds: { north: 53.05, south: 52.25, east: -7.25, west: -8.35 } },
+        { name: 'Kildare', country: 'Ireland', bounds: { north: 53.45, south: 53.05, east: -6.55, west: -7.25 } },
+        { name: 'Meath', country: 'Ireland', bounds: { north: 53.85, south: 53.25, east: -6.15, west: -7.25 } },
+        { name: 'Westmeath', country: 'Ireland', bounds: { north: 53.75, south: 53.25, east: -7.05, west: -7.95 } },
+        { name: 'Clare', country: 'Ireland', bounds: { north: 53.15, south: 52.55, east: -8.45, west: -9.95 } },
+        { name: 'Laois', country: 'Ireland', bounds: { north: 53.25, south: 52.85, east: -7.05, west: -7.85 } },
+        { name: 'Offaly', country: 'Ireland', bounds: { north: 53.45, south: 52.95, east: -7.25, west: -8.05 } },
+        { name: 'Carlow', country: 'Ireland', bounds: { north: 52.95, south: 52.55, east: -6.85, west: -7.25 } },
+        { name: 'Roscommon', country: 'Ireland', bounds: { north: 54.05, south: 53.35, east: -7.95, west: -8.85 } },
+        { name: 'Sligo', country: 'Ireland', bounds: { north: 54.55, south: 54.05, east: -8.15, west: -8.95 } },
+        { name: 'Leitrim', country: 'Ireland', bounds: { north: 54.45, south: 53.95, east: -7.65, west: -8.35 } },
+        { name: 'Cavan', country: 'Ireland', bounds: { north: 54.25, south: 53.85, east: -6.95, west: -7.85 } },
+        { name: 'Monaghan', country: 'Ireland', bounds: { north: 54.45, south: 54.05, east: -6.65, west: -7.25 } },
+        { name: 'Longford', country: 'Ireland', bounds: { north: 53.85, south: 53.45, east: -7.45, west: -8.05 } },
+        { name: 'Louth', country: 'Ireland', bounds: { north: 54.15, south: 53.65, east: -6.15, west: -6.75 } },
+
+        // UK Counties - England
+        { name: 'Greater London', country: 'UK', bounds: { north: 51.70, south: 51.25, east: 0.35, west: -0.55 } },
+        { name: 'Essex', country: 'UK', bounds: { north: 52.05, south: 51.35, east: 1.35, west: -0.05 } },
+        { name: 'Kent', country: 'UK', bounds: { north: 51.65, south: 50.95, east: 1.45, west: 0.05 } },
+        { name: 'Surrey', country: 'UK', bounds: { north: 51.55, south: 51.05, east: -0.05, west: -0.85 } },
+        { name: 'West Sussex', country: 'UK', bounds: { north: 51.25, south: 50.75, east: -0.05, west: -0.95 } },
+        { name: 'East Sussex', country: 'UK', bounds: { north: 51.25, south: 50.75, east: 0.75, west: -0.05 } },
+        { name: 'Hampshire', country: 'UK', bounds: { north: 51.35, south: 50.65, east: -0.65, west: -1.75 } },
+        { name: 'Berkshire', country: 'UK', bounds: { north: 51.65, south: 51.25, east: -0.65, west: -1.35 } },
+        { name: 'Oxfordshire', country: 'UK', bounds: { north: 52.15, south: 51.45, east: -0.85, west: -1.75 } },
+        { name: 'Buckinghamshire', country: 'UK', bounds: { north: 52.05, south: 51.45, east: -0.45, west: -1.15 } },
+        { name: 'Hertfordshire', country: 'UK', bounds: { north: 52.15, south: 51.55, east: 0.15, west: -0.55 } },
+        { name: 'Bedfordshire', country: 'UK', bounds: { north: 52.25, south: 51.85, east: -0.15, west: -0.75 } },
+        { name: 'Cambridgeshire', country: 'UK', bounds: { north: 52.75, south: 52.05, east: 0.55, west: -0.55 } },
+        { name: 'Suffolk', country: 'UK', bounds: { north: 52.55, south: 51.95, east: 1.75, west: 0.35 } },
+        { name: 'Norfolk', country: 'UK', bounds: { north: 53.05, south: 52.35, east: 1.85, west: 0.15 } },
+        { name: 'Lincolnshire', country: 'UK', bounds: { north: 53.75, south: 52.65, east: 0.45, west: -1.05 } },
+        { name: 'Nottinghamshire', country: 'UK', bounds: { north: 53.55, south: 52.85, east: -0.65, west: -1.35 } },
+        { name: 'Leicestershire', country: 'UK', bounds: { north: 53.05, south: 52.35, east: -0.65, west: -1.55 } },
+        { name: 'Warwickshire', country: 'UK', bounds: { north: 52.65, south: 52.05, east: -1.15, west: -1.95 } },
+        { name: 'Northamptonshire', country: 'UK', bounds: { north: 52.65, south: 51.95, east: -0.45, west: -1.25 } },
+        { name: 'West Midlands', country: 'UK', bounds: { north: 52.75, south: 52.35, east: -1.45, west: -2.35 } },
+        { name: 'Staffordshire', country: 'UK', bounds: { north: 53.35, south: 52.55, east: -1.65, west: -2.45 } },
+        { name: 'Shropshire', country: 'UK', bounds: { north: 53.05, south: 52.25, east: -2.25, west: -3.25 } },
+        { name: 'Herefordshire', country: 'UK', bounds: { north: 52.45, south: 51.85, east: -2.65, west: -3.25 } },
+        { name: 'Worcestershire', country: 'UK', bounds: { north: 52.45, south: 52.05, east: -1.85, west: -2.55 } },
+        { name: 'Gloucestershire', country: 'UK', bounds: { north: 52.15, south: 51.45, east: -1.95, west: -2.75 } },
+        { name: 'Bristol', country: 'UK', bounds: { north: 51.55, south: 51.35, east: -2.45, west: -2.75 } },
+        { name: 'Somerset', country: 'UK', bounds: { north: 51.45, south: 50.85, east: -2.45, west: -3.85 } },
+        { name: 'Devon', country: 'UK', bounds: { north: 51.25, south: 50.25, east: -3.25, west: -4.75 } },
+        { name: 'Cornwall', country: 'UK', bounds: { north: 50.95, south: 49.95, east: -4.25, west: -5.75 } },
+        { name: 'Dorset', country: 'UK', bounds: { north: 51.15, south: 50.55, east: -1.85, west: -2.95 } },
+        { name: 'Wiltshire', country: 'UK', bounds: { north: 51.75, south: 51.05, east: -1.65, west: -2.35 } },
+        { name: 'Derbyshire', country: 'UK', bounds: { north: 53.55, south: 52.85, east: -1.25, west: -2.15 } },
+        { name: 'Cheshire', country: 'UK', bounds: { north: 53.45, south: 52.95, east: -2.05, west: -2.95 } },
+        { name: 'Greater Manchester', country: 'UK', bounds: { north: 53.75, south: 53.35, east: -1.95, west: -2.75 } },
+        { name: 'Merseyside', country: 'UK', bounds: { north: 53.65, south: 53.25, east: -2.65, west: -3.15 } },
+        { name: 'Lancashire', country: 'UK', bounds: { north: 54.15, south: 53.45, east: -2.15, west: -3.15 } },
+        { name: 'South Yorkshire', country: 'UK', bounds: { north: 53.75, south: 53.25, east: -1.05, west: -1.85 } },
+        { name: 'West Yorkshire', country: 'UK', bounds: { north: 54.05, south: 53.55, east: -1.25, west: -2.15 } },
+        { name: 'North Yorkshire', country: 'UK', bounds: { north: 54.85, south: 53.85, east: -0.45, west: -2.65 } },
+        { name: 'East Riding of Yorkshire', country: 'UK', bounds: { north: 54.15, south: 53.55, east: -0.05, west: -1.25 } },
+        { name: 'County Durham', country: 'UK', bounds: { north: 54.85, south: 54.45, east: -1.45, west: -2.55 } },
+        { name: 'Tyne and Wear', country: 'UK', bounds: { north: 55.15, south: 54.85, east: -1.25, west: -1.85 } },
+        { name: 'Northumberland', country: 'UK', bounds: { north: 55.85, south: 54.85, east: -1.45, west: -2.85 } },
+        { name: 'Cumbria', country: 'UK', bounds: { north: 55.15, south: 54.05, east: -2.65, west: -3.55 } },
+
+        // Scotland
+        { name: 'Scottish Borders', country: 'UK', bounds: { north: 55.95, south: 55.15, east: -2.25, west: -3.55 } },
+        { name: 'Dumfries and Galloway', country: 'UK', bounds: { north: 55.45, south: 54.65, east: -3.55, west: -5.15 } },
+        { name: 'South Lanarkshire', country: 'UK', bounds: { north: 55.85, south: 55.25, east: -3.65, west: -4.35 } },
+        { name: 'Glasgow', country: 'UK', bounds: { north: 55.95, south: 55.75, east: -4.05, west: -4.45 } },
+        { name: 'North Lanarkshire', country: 'UK', bounds: { north: 56.05, south: 55.65, east: -3.75, west: -4.25 } },
+        { name: 'Edinburgh', country: 'UK', bounds: { north: 55.95, south: 55.85, east: -3.05, west: -3.35 } },
+        { name: 'West Lothian', country: 'UK', bounds: { north: 55.95, south: 55.75, east: -3.35, west: -3.75 } },
+        { name: 'East Lothian', country: 'UK', bounds: { north: 56.05, south: 55.85, east: -2.55, west: -3.05 } },
+        { name: 'Midlothian', country: 'UK', bounds: { north: 55.95, south: 55.65, east: -2.95, west: -3.35 } },
+        { name: 'Fife', country: 'UK', bounds: { north: 56.45, south: 55.95, east: -2.55, west: -3.55 } },
+        { name: 'Stirling', country: 'UK', bounds: { north: 56.45, south: 55.95, east: -3.75, west: -4.75 } },
+        { name: 'Falkirk', country: 'UK', bounds: { north: 56.15, south: 55.85, east: -3.55, west: -3.95 } },
+        { name: 'Clackmannanshire', country: 'UK', bounds: { north: 56.25, south: 56.05, east: -3.65, west: -3.95 } },
+        { name: 'Perth and Kinross', country: 'UK', bounds: { north: 57.05, south: 56.25, east: -3.25, west: -4.85 } },
+        { name: 'Dundee', country: 'UK', bounds: { north: 56.55, south: 56.45, east: -2.85, west: -3.05 } },
+        { name: 'Angus', country: 'UK', bounds: { north: 56.85, south: 56.35, east: -2.35, west: -3.25 } },
+        { name: 'Aberdeenshire', country: 'UK', bounds: { north: 57.65, south: 56.75, east: -1.85, west: -3.75 } },
+        { name: 'Aberdeen', country: 'UK', bounds: { north: 57.25, south: 57.05, east: -2.05, west: -2.25 } },
+        { name: 'Moray', country: 'UK', bounds: { north: 57.75, south: 57.25, east: -2.85, west: -3.85 } },
+        { name: 'Highland', country: 'UK', bounds: { north: 58.95, south: 56.65, east: -3.85, west: -6.25 } },
+        { name: 'Argyll and Bute', country: 'UK', bounds: { north: 56.85, south: 55.25, east: -4.85, west: -6.45 } },
+
+        // Wales
+        { name: 'Cardiff', country: 'UK', bounds: { north: 51.65, south: 51.35, east: -3.05, west: -3.35 } },
+        { name: 'Swansea', country: 'UK', bounds: { north: 51.75, south: 51.55, east: -3.85, west: -4.15 } },
+        { name: 'Newport', country: 'UK', bounds: { north: 51.65, south: 51.55, east: -2.95, west: -3.05 } },
+        { name: 'Monmouthshire', country: 'UK', bounds: { north: 51.85, south: 51.55, east: -2.65, west: -3.15 } },
+        { name: 'Carmarthenshire', country: 'UK', bounds: { north: 52.15, south: 51.65, east: -3.85, west: -4.75 } },
+        { name: 'Pembrokeshire', country: 'UK', bounds: { north: 52.15, south: 51.55, east: -4.55, west: -5.35 } },
+        { name: 'Ceredigion', country: 'UK', bounds: { north: 52.65, south: 52.05, east: -3.85, west: -4.75 } },
+        { name: 'Powys', country: 'UK', bounds: { north: 52.95, south: 51.85, east: -3.05, west: -3.85 } },
+        { name: 'Gwynedd', country: 'UK', bounds: { north: 53.45, south: 52.65, east: -3.75, west: -4.75 } },
+        { name: 'Conwy', country: 'UK', bounds: { north: 53.35, south: 53.05, east: -3.65, west: -4.25 } },
+        { name: 'Denbighshire', country: 'UK', bounds: { north: 53.25, south: 52.95, east: -3.25, west: -3.75 } },
+        { name: 'Flintshire', country: 'UK', bounds: { north: 53.35, south: 53.05, east: -3.05, west: -3.45 } },
+        { name: 'Wrexham', country: 'UK', bounds: { north: 53.15, south: 52.85, east: -2.85, west: -3.25 } },
+        { name: 'Anglesey', country: 'UK', bounds: { north: 53.45, south: 53.15, east: -4.25, west: -4.75 } },
+
+        // Northern Ireland
+        { name: 'Belfast', country: 'UK', bounds: { north: 54.75, south: 54.55, east: -5.85, west: -6.05 } },
+        { name: 'Antrim', country: 'UK', bounds: { north: 55.25, south: 54.45, east: -5.85, west: -6.65 } },
+        { name: 'Armagh', country: 'UK', bounds: { north: 54.65, south: 54.15, east: -6.25, west: -6.95 } },
+        { name: 'Down', country: 'UK', bounds: { north: 54.75, south: 54.05, east: -5.45, west: -6.45 } },
+        { name: 'Fermanagh', country: 'UK', bounds: { north: 54.75, south: 54.15, east: -7.25, west: -8.15 } },
+        { name: 'Londonderry', country: 'UK', bounds: { north: 55.25, south: 54.55, east: -6.65, west: -7.65 } },
+        { name: 'Tyrone', country: 'UK', bounds: { north: 54.95, south: 54.25, east: -6.45, west: -7.65 } }
+    ];
+
+    // Fetch properties data
     useEffect(() => {
         setLoading(true);
         const fetchProperties = async () => {
@@ -77,115 +202,44 @@ const PropertyAnalyticsDashboard = () => {
                 setProperties(data);
             } catch (err) {
                 console.error('Error fetching properties:', err.message);
-                throw err; // Re-throw the error if you want to handle it elsewhere
+                throw err;
             } finally {
                 setLoading(false);
             }
         };
 
-
-        // const fetchProperties = async () => {
-        //     setLoading(true);
-        //     const sampleData = generateSampleDataBasedOnYourStructure();
-        //     setProperties(sampleData);
-        //     setLoading(false);
-        // };
         fetchProperties();
     }, []);
 
-    const generateSampleDataBasedOnYourStructure = async () => {
-        //const data = [];
+    // Helper function to check if coordinates are within bounds
+    const isWithinBounds = (coordinates, bounds) => {
+        if (!coordinates || !Array.isArray(coordinates) || coordinates.length < 2) {
+            return false;
+        }
 
-        // Dublin properties (Daft.ie style)
-        // for (let i = 0; i < 200; i++) {
-        //     const dublinAreas = ['Dublin 1', 'Dublin 2', 'Dublin 4', 'Dublin 8', 'Dublin 9', 'Dublin 15'];
-        //     const berRatings = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2'];
-        //     data.push({
-        //         _id: `daft_${i}`,
-        //         source: 'Daft.ie',
-        //         Address: `Property ${i + 1}, ${dublinAreas[Math.floor(Math.random() * dublinAreas.length)]}`,
-        //         DisplayAddress: `Property ${i + 1}, ${dublinAreas[Math.floor(Math.random() * dublinAreas.length)]}`,
-        //         Price: `€${Math.floor(Math.random() * 800000) + 200000}`,
-        //         numericPrice: Math.floor(Math.random() * 800000) + 200000,
-        //         currency: 'EUR',
-        //         bedsString: Math.random() > 0.3 ? `${Math.floor(Math.random() * 4) + 1} bed` : '1 & 2 bed',
-        //         bathString: Math.random() > 0.2 ? `${Math.floor(Math.random() * 3) + 1} bath` : 'MISSING',
-        //         propertyClass: ['Apartments', 'Houses', 'Townhouses'][Math.floor(Math.random() * 3)],
-        //         propertyType: ['To Let', 'For Sale'][Math.floor(Math.random() * 2)],
-        //         berRating: berRatings[Math.floor(Math.random() * berRatings.length)],
-        //         region: dublinAreas[Math.floor(Math.random() * dublinAreas.length)],
-        //         country: 'Ireland',
-        //         location: {
-        //             coordinates: [-6.2 + Math.random() * 0.4, 53.3 + Math.random() * 0.2]
-        //         },
-        //         groupObject: {
-        //             name: `Estate Agent ${Math.floor(Math.random() * 50) + 1}`,
-        //             phone: `01 ${Math.floor(Math.random() * 9000000) + 1000000}`
-        //         },
-        //         createdOn: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString()
-        //     });
-        // }
+        const [longitude, latitude] = coordinates;
 
-        // UK properties (OnTheMarket style)
-        // for (let i = 0; i < 150; i++) {
-        //     const ukAreas = ['London', 'Manchester', 'Birmingham', 'Leeds', 'Bristol', 'Liverpool'];
-        //     const propertyTypes = ['Detached house', 'Semi-detached house', 'Terraced house', 'Flat', 'Bungalow'];
-        //     data.push({
-        //         _id: `otm_${i}`,
-        //         source: 'OnTheMarket',
-        //         Address: `${Math.floor(Math.random() * 200) + 1} High Street, ${ukAreas[Math.floor(Math.random() * ukAreas.length)]}`,
-        //         DisplayAddress: `${Math.floor(Math.random() * 200) + 1} High Street, ${ukAreas[Math.floor(Math.random() * ukAreas.length)]}`,
-        //         Price: `£${Math.floor(Math.random() * 900000) + 150000}`,
-        //         numericPrice: Math.floor(Math.random() * 900000) + 150000,
-        //         currency: 'GBP',
-        //         bedsString: Math.floor(Math.random() * 6) + 1,
-        //         bathString: Math.floor(Math.random() * 4) + 1,
-        //         propertyType: propertyTypes[Math.floor(Math.random() * propertyTypes.length)],
-        //         region: ukAreas[Math.floor(Math.random() * ukAreas.length)],
-        //         country: 'UK',
-        //         location: {
-        //             coordinates: [-0.1 + Math.random() * 0.4, 51.5 + Math.random() * 0.2]
-        //         },
-        //         groupObject: {
-        //             groupName: `UK Estate Agent ${Math.floor(Math.random() * 30) + 1}`,
-        //             GroupPhoneNumber: `020 ${Math.floor(Math.random() * 90000000) + 10000000}`
-        //         }
-        //     });
-        // }
+        return (
+            latitude >= bounds.south &&
+            latitude <= bounds.north &&
+            longitude >= bounds.west &&
+            longitude <= bounds.east
+        );
+    };
 
-        // Ireland regional properties (MyHome.ie style)
-        // for (let i = 0; i < 100; i++) {
-        //     const counties = ['Cork', 'Galway', 'Limerick', 'Waterford', 'Kilkenny', 'Monaghan', 'Donegal'];
-        //     const propertyTypes = ['Detached House', 'Semi-Detached House', 'Terraced House', 'Apartment', 'Bungalow'];
-        //     const berRatings = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2'];
-        //     data.push({
-        //         _id: `myhome_${i}`,
-        //         source: 'MyHome.ie',
-        //         Address: `${Math.floor(Math.random() * 50) + 1} Main Street, ${counties[Math.floor(Math.random() * counties.length)]}`,
-        //         DisplayAddress: `${Math.floor(Math.random() * 50) + 1} Main Street, ${counties[Math.floor(Math.random() * counties.length)]}`,
-        //         Price: `€${Math.floor(Math.random() * 500000) + 100000}`,
-        //         numericPrice: Math.floor(Math.random() * 500000) + 100000,
-        //         currency: 'EUR',
-        //         bedsString: `${Math.floor(Math.random() * 5) + 1} beds`,
-        //         bathString: `${Math.floor(Math.random() * 3) + 1} baths`,
-        //         propertyClass: 'ResidentialForSale',
-        //         propertyType: propertyTypes[Math.floor(Math.random() * propertyTypes.length)],
-        //         berRating: berRatings[Math.floor(Math.random() * berRatings.length)],
-        //         region: counties[Math.floor(Math.random() * counties.length)],
-        //         country: 'Ireland',
-        //         location: {
-        //             coordinates: [-8 + Math.random() * 2, 52 + Math.random() * 3]
-        //         },
-        //         groupObject: {
-        //             groupName: `DNG ${counties[Math.floor(Math.random() * counties.length)]}`,
-        //             GroupPhoneNumber: `0${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 9000000) + 1000000}`
-        //         },
-        //         createdOn: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-        //         ActivatedOn: new Date(Date.now() - Math.random() * 200 * 24 * 60 * 60 * 1000).toISOString()
-        //     });
-        // }
+    // Helper function to determine region from coordinates
+    const getRegionFromCoordinates = (coordinates) => {
+        if (!coordinates || !Array.isArray(coordinates) || coordinates.length < 2) {
+            return 'Unknown';
+        }
 
-        return data;
+        for (const region of REGION_BOUNDARIES_ARRAY) {
+            if (isWithinBounds(coordinates, region.bounds)) {
+                return region.name;
+            }
+        }
+
+        return 'Unknown';
     };
 
     // Helper functions
@@ -208,12 +262,30 @@ const PropertyAnalyticsDashboard = () => {
         return price * (rates[currency] || 1);
     };
 
-    // Filter properties
+    // Filter properties based on coordinates
     const filteredProperties = useMemo(() => {
-        let filtered = properties;
+        let filtered = properties.map(prop => ({
+            ...prop,
+            calculatedRegion: prop.location?.coordinates
+                ? getRegionFromCoordinates(prop.location.coordinates)
+                : prop.region || 'Unknown'
+        }));
 
         if (selectedRegion !== 'All') {
-            filtered = filtered.filter(prop => prop.region === selectedRegion);
+            const selectedRegionObj = REGION_BOUNDARIES_ARRAY.find(r => r.name === selectedRegion);
+            if (selectedRegionObj) {
+                // Filter by coordinates if region has bounds
+                filtered = filtered.filter(prop => {
+                    if (prop.location?.coordinates) {
+                        return isWithinBounds(prop.location.coordinates, selectedRegionObj.bounds);
+                    }
+                    // Fallback to string matching if no coordinates
+                    return prop.region === selectedRegion;
+                });
+            } else {
+                // Fallback to string matching
+                filtered = filtered.filter(prop => prop.region === selectedRegion);
+            }
         }
 
         if (selectedCurrency !== 'All') {
@@ -227,9 +299,21 @@ const PropertyAnalyticsDashboard = () => {
         return filtered;
     }, [properties, selectedRegion, selectedCurrency, selectedSource]);
 
-    // Get unique values for filters
+    // Get unique values for filters - now using calculated regions
     const regions = useMemo(() => {
-        const uniqueRegions = [...new Set(properties.map(prop => prop.region).filter(Boolean))];
+        // Get regions from coordinates first, then fallback to string regions
+        const coordinateBasedRegions = properties
+            .filter(prop => prop.location?.coordinates)
+            .map(prop => getRegionFromCoordinates(prop.location.coordinates))
+            .filter(Boolean);
+
+        const stringBasedRegions = properties
+            .filter(prop => !prop.location?.coordinates && prop.region)
+            .map(prop => prop.region);
+
+        const allRegions = [...coordinateBasedRegions, ...stringBasedRegions];
+        const uniqueRegions = [...new Set(allRegions)].filter(Boolean);
+
         return ['All', ...uniqueRegions.sort()];
     }, [properties]);
 
@@ -275,13 +359,11 @@ const PropertyAnalyticsDashboard = () => {
         };
     }, [filteredProperties, regions]);
 
-    // PART 2: Analytics Calculations (Add these to Part 1 after marketStats)
-
-    // Analytics calculations
+    // Analytics calculations using calculatedRegion
     const priceAnalytics = useMemo(() => {
         const regionData = {};
         filteredProperties.forEach(prop => {
-            const region = prop.region || 'Unknown';
+            const region = prop.calculatedRegion || 'Unknown';
             if (!regionData[region]) {
                 regionData[region] = { total: 0, count: 0, properties: [] };
             }
@@ -466,10 +548,10 @@ const PropertyAnalyticsDashboard = () => {
         const typeCount = new Set(filteredProperties.map(p => p.propertyType || p.propertyClass)).size;
         const diversity = typeCount / filteredProperties.length;
 
-        // Calculate regional concentration
+        // Calculate regional concentration using calculatedRegion
         const regionCounts = {};
         filteredProperties.forEach(prop => {
-            regionCounts[prop.region] = (regionCounts[prop.region] || 0) + 1;
+            regionCounts[prop.calculatedRegion] = (regionCounts[prop.calculatedRegion] || 0) + 1;
         });
         const maxRegionShare = Math.max(...Object.values(regionCounts)) / filteredProperties.length;
 
@@ -484,12 +566,12 @@ const PropertyAnalyticsDashboard = () => {
 
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c', '#8dd1e1', '#d084d0', '#a4de6c', '#ffc0cb'];
 
-    // Regional comparison with more detailed metrics
+    // Regional comparison with coordinate-based regions
     const regionalComparison = useMemo(() => {
         const regionMetrics = {};
 
         filteredProperties.forEach(prop => {
-            const region = prop.region || 'Unknown';
+            const region = prop.calculatedRegion || 'Unknown';
             if (!regionMetrics[region]) {
                 regionMetrics[region] = {
                     properties: [],
@@ -548,7 +630,7 @@ const PropertyAnalyticsDashboard = () => {
                 price: priceEUR,
                 pricePerSqm: Math.round(priceEUR / estimatedSize),
                 bedrooms,
-                region: prop.region,
+                region: prop.calculatedRegion,
                 type: prop.propertyType || prop.propertyClass
             };
         });
@@ -592,7 +674,7 @@ const PropertyAnalyticsDashboard = () => {
                     Multi-Source Property Market Analytics
                 </Typography>
                 <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                    Comprehensive analysis across Daft.ie, OnTheMarket, and MyHome.ie
+                    Comprehensive analysis across Daft.ie, OnTheMarket, and MyHome.ie with coordinate-based filtering
                 </Typography>
             </Paper>
 
@@ -772,7 +854,15 @@ const PropertyAnalyticsDashboard = () => {
                                         height={80}
                                     />
                                     <YAxis tickFormatter={(value) => `€${(value / 1000).toFixed(0)}k`} />
-                                    <Tooltip formatter={(value) => [`€${value.toLocaleString()}`, 'Average Price']} />
+                                    <Tooltip formatter={(value, index) => {
+                                        if (index === 'Average Price') {
+                                            return [`€${value.toLocaleString()}`, 'Average Price']
+                                        }
+                                        else {
+                                            return [`${value.toLocaleString()}`, 'Property Count']
+                                        }
+                                    }
+                                    } />
                                     <Legend />
                                     <Bar dataKey="averagePrice" fill="#8884d8" name="Average Price" />
                                     <Bar dataKey="totalProperties" yAxisId="right" fill="#82ca9d" name="Property Count" />
@@ -877,10 +967,13 @@ const PropertyAnalyticsDashboard = () => {
                                         height={100}
                                     />
                                     <YAxis />
-                                    <Tooltip formatter={(value, name) => [
-                                        name === 'properties' ? value.toLocaleString() : `€${value.toLocaleString()}`,
-                                        name === 'properties' ? 'Properties' : 'Average Value'
-                                    ]} />
+                                    <Tooltip formatter={(value, name) => {
+                                        return [
+                                            name === 'Properties' ? value.toLocaleString() : `€${value.toLocaleString()}`,
+                                            name === 'Properties' ? 'Properties' : 'Average Value'
+                                        ]
+                                    }
+                                    } />
                                     <Bar dataKey="properties" fill="#8884d8" name="Properties" />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -1069,11 +1162,13 @@ const PropertyAnalyticsDashboard = () => {
                                     <XAxis dataKey="currency" />
                                     <YAxis yAxisId="left" />
                                     <YAxis yAxisId="right" orientation="right" />
-                                    <Tooltip formatter={(value, name) => [
-                                        name === 'properties' ? value.toLocaleString() :
-                                            `${currencyDistribution.find(c => c.properties === value || c.averageValue === value)?.currency || ''} ${value.toLocaleString()}`,
-                                        name
-                                    ]} />
+                                    <Tooltip formatter={(value, name) => {
+                                        return [
+                                            name === 'Number of Properties' ? value.toLocaleString() :
+                                                `${currencyDistribution.find(c => c.properties === value || c.averageValue === value)?.currency || ''} ${value.toLocaleString()}`,
+                                            name
+                                        ]
+                                    }} />
                                     <Legend />
                                     <Bar yAxisId="left" dataKey="properties" fill="#8884d8" name="Number of Properties" />
                                     <Line yAxisId="right" type="monotone" dataKey="averageValue" stroke="#ff7300" name="Average Value" strokeWidth={3} />
@@ -1096,8 +1191,8 @@ const PropertyAnalyticsDashboard = () => {
                                     <YAxis yAxisId="left" />
                                     <YAxis yAxisId="right" orientation="right" />
                                     <Tooltip formatter={(value, name) => [
-                                        name === 'properties' ? value : `€${value.toLocaleString()}`,
-                                        name === 'properties' ? 'Properties Listed' : 'Average Price'
+                                        name === 'Properties' ? value : `€${value.toLocaleString()}`,
+                                        name === 'Properties' ? 'Properties Listed' : 'Average Price'
                                     ]} />
                                     <Legend />
                                     <Bar yAxisId="left" dataKey="properties" fill="#8884d8" name="Properties" />
