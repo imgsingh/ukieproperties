@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Box } from '@mui/material';
 import PropertyTable from './PropertyTable'; // Import the common table component
-import { styled } from '@mui/system';
+import styles from '../styles/Map.module.css';
 
 // Import Leaflet CSS to ensure it's loaded
 import 'leaflet/dist/leaflet.css';
@@ -198,6 +197,7 @@ const MyMapComponent = () => {
                 style={{ height: "450px", width: "100%", borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
                 whenReady={handleMapCreated}
                 ref={mapRef}
+                className={styles.mapContainer}
             >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

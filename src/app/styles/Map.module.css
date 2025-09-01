@@ -1,0 +1,7 @@
+/* In Map.module.css */
+.mapContainer :global(.leaflet-draw-draw-marker),
+.mapContainer :global(.leaflet-draw-draw-circlemarker),
+.mapContainer :global(.leaflet-draw-edit-edit),
+.mapContainer :global(.leaflet-draw-edit-remove) {
+    display: none !important;
+}
