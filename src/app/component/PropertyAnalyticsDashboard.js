@@ -53,6 +53,7 @@ const PropertyAnalyticsDashboard = () => {
     const [selectedCurrency, setSelectedCurrency] = useState('All');
     const [selectedSource, setSelectedSource] = useState('All');
     const [activeTab, setActiveTab] = useState(0);
+    const [sourceFilteredProperties, setSourceFilteredProperties] = useState([]);
 
     const REGION_BOUNDARIES_ARRAY = [
         // Irish Counties
@@ -211,6 +212,14 @@ const PropertyAnalyticsDashboard = () => {
         fetchProperties();
     }, []);
 
+    useEffect(() => {
+        if (selectedSource === 'All') {
+            setSourceFilteredProperties(properties);
+        } else {
+            setSourceFilteredProperties(properties.filter(prop => prop.source === selectedSource));
+        }
+    }, [properties, selectedSource]);
+
     // Helper function to check if coordinates are within bounds
     const isWithinBounds = (coordinates, bounds) => {
         if (!coordinates || !Array.isArray(coordinates) || coordinates.length < 2) {
@@ -264,7 +273,7 @@ const PropertyAnalyticsDashboard = () => {
 
     // Filter properties based on coordinates
     const filteredProperties = useMemo(() => {
-        let filtered = properties.map(prop => ({
+        let filtered = sourceFilteredProperties.map(prop => ({
             ...prop,
             calculatedRegion: prop.location?.coordinates
                 ? getRegionFromCoordinates(prop.location.coordinates)
@@ -274,16 +283,13 @@ const PropertyAnalyticsDashboard = () => {
         if (selectedRegion !== 'All') {
             const selectedRegionObj = REGION_BOUNDARIES_ARRAY.find(r => r.name === selectedRegion);
             if (selectedRegionObj) {
-                // Filter by coordinates if region has bounds
                 filtered = filtered.filter(prop => {
                     if (prop.location?.coordinates) {
                         return isWithinBounds(prop.location.coordinates, selectedRegionObj.bounds);
                     }
-                    // Fallback to string matching if no coordinates
                     return prop.region === selectedRegion;
                 });
             } else {
-                // Fallback to string matching
                 filtered = filtered.filter(prop => prop.region === selectedRegion);
             }
         }
@@ -292,22 +298,17 @@ const PropertyAnalyticsDashboard = () => {
             filtered = filtered.filter(prop => prop.currency === selectedCurrency);
         }
 
-        if (selectedSource !== 'All') {
-            filtered = filtered.filter(prop => prop.source === selectedSource);
-        }
-
         return filtered;
-    }, [properties, selectedRegion, selectedCurrency, selectedSource]);
+    }, [sourceFilteredProperties, selectedRegion, selectedCurrency]);
 
     // Get unique values for filters - now using calculated regions
     const regions = useMemo(() => {
-        // Get regions from coordinates first, then fallback to string regions
-        const coordinateBasedRegions = properties
+        const coordinateBasedRegions = sourceFilteredProperties
             .filter(prop => prop.location?.coordinates)
             .map(prop => getRegionFromCoordinates(prop.location.coordinates))
             .filter(Boolean);
 
-        const stringBasedRegions = properties
+        const stringBasedRegions = sourceFilteredProperties
             .filter(prop => !prop.location?.coordinates && prop.region)
             .map(prop => prop.region);
 
@@ -315,12 +316,12 @@ const PropertyAnalyticsDashboard = () => {
         const uniqueRegions = [...new Set(allRegions)].filter(Boolean);
 
         return ['All', ...uniqueRegions.sort()];
-    }, [properties]);
+    }, [sourceFilteredProperties]);
 
     const currencies = useMemo(() => {
-        const uniqueCurrencies = [...new Set(properties.map(prop => prop.currency).filter(Boolean))];
+        const uniqueCurrencies = [...new Set(sourceFilteredProperties.map(prop => prop.currency).filter(Boolean))];
         return ['All', ...uniqueCurrencies.sort()];
-    }, [properties]);
+    }, [sourceFilteredProperties]);
 
     const sources = useMemo(() => {
         const uniqueSources = [...new Set(properties.map(prop => prop.source).filter(Boolean))];
@@ -714,7 +715,11 @@ const PropertyAnalyticsDashboard = () => {
                             <InputLabel>Data Source</InputLabel>
                             <Select
                                 value={selectedSource}
-                                onChange={(e) => setSelectedSource(e.target.value)}
+                                onChange={(e) => {
+                                    setSelectedSource(e.target.value);
+                                    setSelectedRegion('All'); // Reset region filter
+                                    setSelectedCurrency('All'); // Reset currency filter
+                                }}
                                 label="Data Source"
                             >
                                 {sources.map(source => (
