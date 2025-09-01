@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     TableContainer,
@@ -42,7 +42,7 @@ import { getFromLocalStorage } from '../utils/Common';
 
 const PropertyTable = ({ properties = [], showAiChat = false }) => {
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
 
     // AI Chat states
     const [aiChatOpen, setAiChatOpen] = useState(false);
@@ -62,6 +62,8 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
     // Liked properties state
     const [likedProperties, setLikedProperties] = useState(new Set());
     const [likingInProgress, setLikingInProgress] = useState(new Set());
+
+    const chatContainerRef = useRef(null);
 
     // Fetch exchange rates
     const fetchExchangeRates = async () => {
@@ -95,6 +97,13 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
         fetchExchangeRates();
         fetchLikedProperties();
     }, []);
+
+    // Effect to scroll chat to bottom
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [chatMessages]);
 
     // Fetch user's liked properties
     const fetchLikedProperties = async () => {
@@ -589,7 +598,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[25, 50]}
                 component="div"
                 count={properties.length}
                 rowsPerPage={rowsPerPage}
@@ -644,7 +653,7 @@ const PropertyTable = ({ properties = [], showAiChat = false }) => {
                         </Box>
                     )}
 
-                    <DialogContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 0 }}>
+                    <DialogContent ref={chatContainerRef} dividers sx={{ p: 2, bgcolor: 'grey.100', height: '400px' }}>
                         <List sx={{ flex: 1, overflow: 'auto', p: 2 }}>
                             {chatMessages.map((msg, index) => (
                                 <ListItem

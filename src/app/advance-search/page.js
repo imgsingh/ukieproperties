@@ -7,7 +7,9 @@ import PropertyTable from './../component/PropertyTable'; // Import the common t
 import { Typography } from '@mui/material';
 import styles from './page.module.css';
 import Footer from "../component/Footer";
-import { getFromLocalStorage } from '../utils/Common'
+import { getFromLocalStorage } from '../utils/Common';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
 const Page = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -32,6 +34,9 @@ const Page = () => {
 
             const data = await response.json();
             setSearchResults(data || []);
+            if (!data || data.length === 0) {
+                toastr.info('No properties found for this search!');
+            }
         } catch (error) {
             console.error('Error during search:', error);
         }
