@@ -16,6 +16,30 @@ import {
 import { styled } from '@mui/system';
 import { getFromLocalStorage } from '../utils/Common'
 
+const extractNumbers = (str) => {
+    if (!str) return [];
+    const cleanedStr = str.replace(/,/g, ''); // Remove all commas
+    const matches = cleanedStr.match(/[-+]?\d*\.\d+|\d+/g);
+    return matches ? matches.map(Number) : [];
+};
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+    borderRadius: theme.spacing(2),
+    backgroundColor: '#f5f5f5',
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    backgroundColor: '#1976d2',
+    color: 'white',
+    '&:hover': {
+        backgroundColor: '#1565c0',
+    },
+}));
+
 const ListPage = () => {
     const [searchRadius, setSearchRadius] = useState('0.0');
     const [priceRange, setPriceRange] = useState({ min: '0', max: '0' });
@@ -27,23 +51,6 @@ const ListPage = () => {
     const [properties, setProperties] = useState([]);
     const [isClient, setIsClient] = useState(false);
     const [sortOption, setSortOption] = useState('address-asc');
-
-    const StyledPaper = styled(Paper)(({ theme }) => ({
-        borderRadius: theme.spacing(2),
-        backgroundColor: '#f5f5f5',
-        padding: theme.spacing(3),
-        marginBottom: theme.spacing(3),
-    }));
-
-    const StyledButton = styled(Button)(({ theme }) => ({
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        backgroundColor: '#1976d2',
-        color: 'white',
-        '&:hover': {
-            backgroundColor: '#1565c0',
-        },
-    }));
 
     const handleSearch = () => {
         const token = getFromLocalStorage('token');
@@ -82,12 +89,6 @@ const ListPage = () => {
                 console.error("Error searching properties API:", error)
             );
     };
-
-    function extractNumbers(str) {
-        const cleanedStr = str.replace(/,/g, ''); // Remove all commas
-        const matches = cleanedStr.match(/[-+]?\d*\.\d+|\d+/g);
-        return matches ? matches.map(Number) : [];
-    }
 
     const sortedProperties = useMemo(() => {
         let sorted = [...properties];
@@ -188,17 +189,17 @@ const ListPage = () => {
                                     onChange={(e) => setSearchRadius(e.target.value)}
                                     sx={{ width: 300 }}
                                 >
-                                    <MenuItem value="0.0">+ 0 miles</MenuItem>
-                                    <MenuItem value="0.25">+ 1/4 mile</MenuItem>
-                                    <MenuItem value="0.5">+ 1/2 mile</MenuItem>
-                                    <MenuItem value="1.0">+ 1 mile</MenuItem>
-                                    <MenuItem value="3.0">+ 3 miles</MenuItem>
-                                    <MenuItem value="5.0">+ 5 miles</MenuItem>
-                                    <MenuItem value="10.0">+ 10 miles</MenuItem>
-                                    <MenuItem value="15.0">+ 15 miles</MenuItem>
-                                    <MenuItem value="20.0">+ 20 miles</MenuItem>
-                                    <MenuItem value="30.0">+ 30 miles</MenuItem>
-                                    <MenuItem value="40.0">+ 40 miles</MenuItem>
+                                    <MenuItem value="0.0">+ 0 km</MenuItem>
+                                    <MenuItem value="0.25">+ 1/4 km</MenuItem>
+                                    <MenuItem value="0.5">+ 1/2 km</MenuItem>
+                                    <MenuItem value="1.0">+ 1 km</MenuItem>
+                                    <MenuItem value="3.0">+ 3 kms</MenuItem>
+                                    <MenuItem value="5.0">+ 5 kms</MenuItem>
+                                    <MenuItem value="10.0">+ 10 kms</MenuItem>
+                                    <MenuItem value="15.0">+ 15 kms</MenuItem>
+                                    <MenuItem value="20.0">+ 20 kms</MenuItem>
+                                    <MenuItem value="30.0">+ 30 kms</MenuItem>
+                                    <MenuItem value="40.0">+ 40 kms</MenuItem>
                                 </Select>
                             </Box>
                         </FormControl>
@@ -288,7 +289,8 @@ const ListPage = () => {
                             </Typography>
                             <TextField
                                 variant="outlined"
-                                onChange={(e) => setKeyword(e.target.value)}
+                                value={keyword}
+                                onChange={(e) => { setKeyword(e.target.value); }}
                             />
                         </Box>
                     </Box>
