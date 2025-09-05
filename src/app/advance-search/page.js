@@ -5,7 +5,7 @@ import Navbar from './../component/Navbar';
 import SearchBar from './../component/SearchBar';
 import PropertyTable from './../component/PropertyTable';
 import QueryDisplay from './../component/QueryDisplay'; // Import the new component
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import styles from './page.module.css';
 import Footer from "../component/Footer";
 import { getFromLocalStorage } from '../utils/Common';
@@ -39,8 +39,6 @@ const Page = () => {
             }
 
             const data = await response.json();
-
-            // Handle the new response structure
             const properties = data.properties || data || [];
             const executedQuery = data.executedQuery || '';
             const originalQuery = data.originalQuery || query;
@@ -81,18 +79,20 @@ const Page = () => {
                     fontWeight: 'bold',
                 }}
             >
-                AI-Based Search
+                AI-Powered Property Search
             </Typography>
-            <SearchBar onSearch={onSearch} />
 
-            {/* Display query information */}
+            {/* Enhanced SearchBar with auto-suggest */}
+            <Box sx={{ mb: 3, px: 2 }}>
+                <SearchBar onSearch={onSearch} />
+            </Box>
+
             <QueryDisplay
                 originalQuery={queryInfo.originalQuery}
                 executedQuery={queryInfo.executedQuery}
                 resultCount={queryInfo.resultCount}
             />
 
-            {/* Use the common PropertyTable component with AI chat enabled */}
             <PropertyTable properties={searchResults} showAiChat={true} />
             <div style={{ marginTop: '20px' }}>
                 <Footer />

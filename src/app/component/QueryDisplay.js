@@ -99,12 +99,12 @@ const QueryDisplay = ({ originalQuery, executedQuery, resultCount }) => {
 
                     {searchFields.length > 0 && (
                         <Box sx={{ marginBottom: 2 }}>
-                            <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                            {/* <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                                 Searching in Database Fields:
-                            </Typography>
+                            </Typography> */}
 
                             {/* Group fields and show search terms */}
-                            <Box sx={{ marginTop: 1 }}>
+                            {/* <Box sx={{ marginTop: 1 }}>
                                 {(() => {
                                     // Group by field name
                                     const fieldGroups = searchFields.reduce((groups, field) => {
@@ -134,7 +134,7 @@ const QueryDisplay = ({ originalQuery, executedQuery, resultCount }) => {
                                         </Box>
                                     ));
                                 })()}
-                            </Box>
+                            </Box> */}
 
                             {/* Show search terms summary */}
                             <Box sx={{ marginTop: 2, padding: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
